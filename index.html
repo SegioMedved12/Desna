@@ -198,8 +198,15 @@ cursor:pointer;
         <div id="bobber"><div class="ant"></div><div class="bod"></div></div>
         <div id="fight-ui">
             <b style="color:var(--neon)">КЛЮЄ! ТЯГНИ!</b>
-            <div class="f-bar"><div id="t-fill" style="width:0; background:var(--neon); height:100%;"></div></div>
-            <div class="f-bar"><div id="p-fill" style="width:0; background:#2196f3; height:100%;"></div></div>
+            <div style="font-size:12px;">НАТЯГ ЛІСКИ</div>
+<div class="f-bar">
+    <div id="t-fill" style="width:0; background:var(--neon); height:100%;"></div>
+</div>
+
+<div style="font-size:12px;">ВИТЯГУЄШ РИБУ</div>
+<div class="f-bar">
+    <div id="p-fill" style="width:0; background:#2196f3; height:100%;"></div>
+</div>
             <button class="btn" style="background:green" onmousedown="startPull()" onmouseup="stopPull()" ontouchstart="startPull()" ontouchend="stopPull()">ТЯГНИ 🎣</button>
         </div>
     </div>
@@ -504,12 +511,21 @@ setInterval(() => {
     function stopPull() { pullActive = false; document.getElementById('s-reel').pause(); }
     
     function updateFightUI() {
-        document.getElementById('p-fill').style.width = progress + "%";
-        document.getElementById('t-fill').style.width = tension + "%";
-        document.getElementById('t-fill').style.background = tension > 80 ? "red" : "var(--neon)";
-        let angle = 15 - tension/4;
-document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
+    document.getElementById('p-fill').style.width = progress + "%";
+    document.getElementById('t-fill').style.width = tension + "%";
+
+    // натяг зелений → жовтий → червоний
+    if(tension < 50){
+        document.getElementById('t-fill').style.background = "lime";
+    } else if(tension < 80){
+        document.getElementById('t-fill').style.background = "orange";
+    } else {
+        document.getElementById('t-fill').style.background = "red";
     }
+
+    let angle = 15 - tension/4;
+    document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
+}
 
     function catchFish() {
         let bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
