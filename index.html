@@ -48,6 +48,10 @@
 <audio id="s-bite" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
 <audio id="s-reel" src="https://actions.google.com/sounds/v1/foley/fishing_reel_fast.ogg"></audio>
 
+<audio id="bg-music" loop></audio>
+
+ 
+
 <div class="stats">
     <div>💰 <span id="money">500</span></div>
     <div>⭐ Р-д: <span id="rank">1</span></div>
@@ -138,6 +142,40 @@
 </div>
 
 <script>
+
+       const MUSIC = [
+"Sergio Medved - 03.08.25(1).mp3",
+"Sergio Medved - 04.01.26.mp3",
+"Sergio Medved - 12.11.25.mp3",
+"Sergio Medved - 19.10.25.mp3",
+"Sergio Medved - 21.10.25.mp3",
+"Sergio Medved - 22.03.26(1).mp3",
+"Sergio Medved - 24.01.26(2).mp3",
+"Sergio Medved - 25.10.25(1).mp3",
+"Sergio Medved - 25.11.25.mp3",
+"Sergio Medved - 25.12.25.mp3"
+];
+    function playRandomMusic(){
+
+    let audio = document.getElementById("bg-music");
+
+    let track = MUSIC[Math.floor(Math.random()*MUSIC.length)];
+
+    audio.src = track;
+
+    audio.volume = 0.2; // 80% тихіше
+
+    audio.play();
+
+}
+
+    document.getElementById("bg-music").addEventListener("ended", function(){
+    playRandomMusic();
+});
+    document.body.addEventListener("click", function startMusic(){
+    playRandomMusic();
+    document.body.removeEventListener("click", startMusic);
+});
     const GEAR_DATA = {
         baits: [
             {n: "Хліб", p: 20, target: ["Плітка", "Карась"], size: [0.1, 1.2]},
@@ -397,41 +435,7 @@
         alert(`🐟 Впіймано: ${name} (${fishW} кг)!`);
         resetGame();
     }
-<audio id="bg-music" loop></audio>
 
-    const MUSIC = [
-"Sergio Medved - 03.08.25(1).mp3",
-"Sergio Medved - 04.01.26.mp3",
-"Sergio Medved - 12.11.25.mp3",
-"Sergio Medved - 19.10.25.mp3",
-"Sergio Medved - 21.10.25.mp3",
-"Sergio Medved - 22.03.26(1).mp3",
-"Sergio Medved - 24.01.26(2).mp3",
-"Sergio Medved - 25.10.25(1).mp3",
-"Sergio Medved - 25.11.25.mp3",
-"Sergio Medved - 25.12.25.mp3"
-];
-    function playRandomMusic(){
-
-    let audio = document.getElementById("bg-music");
-
-    let track = MUSIC[Math.floor(Math.random()*MUSIC.length)];
-
-    audio.src = track;
-
-    audio.volume = 0.2; // 80% тихіше
-
-    audio.play();
-
-}
-
-    document.getElementById("bg-music").addEventListener("ended", function(){
-    playRandomMusic();
-});
-    document.body.addEventListener("click", function startMusic(){
-    playRandomMusic();
-    document.body.removeEventListener("click", startMusic);
-});
     function resetGame() { state = 'idle'; document.getElementById('bobber').style.display = 'none'; document.getElementById('fight-ui').style.display = 'none'; document.getElementById('rod-visual').style.display = 'none'; document.getElementById('s-reel').pause(); progress = 0; tension = 0; }
     function renderAchs() { document.getElementById('ach-container').innerHTML = ACHS.map(a => `<div class="ach-card ${p.unlockedAchs.includes(a.id)?'ach-unlocked':''}"><b>${a.n}</b><br>${a.d}</div>`).join(''); }
     function checkAchs() { ACHS.forEach(a => { if(!p.unlockedAchs.includes(a.id) && a.c(p)) { p.unlockedAchs.push(a.id); alert("🏆 ДОСЯГНЕННЯ: "+a.n); } }); }
