@@ -3,240 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Десна: Нічний Улов</title>
+    <title>Десна: РР3 Style</title>
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; user-select: none; overflow: hidden; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--dark); color: white; user-select: none; overflow: hidden; touch-action: none; }
         
-        .stats { background: var(--wood); padding: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.9em; text-align: center; box-shadow: 0 2px 10px black; position: relative; z-index: 100; }
+        /* Статистика */
+        .stats { background: var(--wood); padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.85em; text-align: center; z-index: 100; position: relative; }
         .val { color: var(--gold); font-weight: bold; }
+        .hunger-wrap { grid-column: span 2; background: #222; height: 10px; border-radius: 5px; margin-top: 5px; overflow: hidden; border: 1px solid #555; }
+        #hunger-fill { height: 100%; background: linear-gradient(90deg, #f44336, #4caf50); width: 100%; transition: 0.3s; }
 
         .screen { display: none; padding: 15px; text-align: center; height: 85vh; overflow-y: auto; }
         .active { display: block; }
 
-        .btn { background: #5d4037; color: white; border: 2px solid var(--gold); padding: 14px; margin: 8px auto; width: 95%; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .btn:active { background: #2b1d1a; transform: scale(0.95); }
-
-        #game-view { height: 45vh; position: relative; background-size: cover; background-position: center; border: 4px solid var(--wood); margin-bottom: 10px; background-color: #222; overflow: hidden; transition: 2s; }
+        .btn { background: #5d4037; color: white; border: 2px solid var(--gold); padding: 12px; margin: 5px auto; width: 95%; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
-        /* НІЧНИЙ ФІЛЬТР */
-        #night-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 5, 40, 0.6); pointer-events: none; opacity: 0; transition: 3s; z-index: 5; }
+        /* Ігрове поле */
+        #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 4px solid var(--wood); cursor: crosshair; overflow: hidden; }
+        #night-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0, 5, 40, 0.6); pointer-events: none; opacity: 0; transition: 3s; z-index: 5; }
+
+        /* ВУДКА (РР3 Style) */
+        #rod { position: absolute; bottom: -20px; right: -30px; width: 300px; height: 10px; background: linear-gradient(to right, #222, #444); transform-origin: bottom right; transform: rotate(-45deg); pointer-events: none; z-index: 20; border-radius: 5px; box-shadow: 0 0 10px black; }
+        #line { position: absolute; background: rgba(255,255,255,0.4); width: 1px; transform-origin: top left; z-index: 15; pointer-events: none; display: none; }
 
         /* ПОПЛАВОК */
-        #bobber-container { position: absolute; top: 65%; left: 50%; display: none; transform: translate(-50%, -100%); z-index: 10; transition: top 0.2s; }
-        .p-antenna { width: 4px; height: 35px; background: red; margin: 0 auto; border: 0.5px solid black; transition: 1s; }
-        .p-body { width: 16px; height: 22px; background: white; border-radius: 50% 50% 40% 40%; border: 1px solid #333; margin-top: -10px; }
+        #bobber { position: absolute; display: none; z-index: 10; transform: translate(-50%, -100%); transition: top 0.2s; }
+        .ant { width: 3px; height: 25px; background: red; margin: 0 auto; border: 0.5px solid black; }
+        .glow { background: var(--neon) !important; box-shadow: 0 0 10px var(--neon); }
+        .bod { width: 12px; height: 16px; background: white; border-radius: 50%; border: 1px solid #333; margin-top: -8px; }
 
-        /* НЕОНОВЕ СВІТЛО (для ночі) */
-        .neon-glow { background: var(--neon) !important; box-shadow: 0 0 15px var(--neon), 0 0 30px var(--neon) !important; border: none !important; }
+        .bite-anim { animation: b-shake 0.3s infinite; }
+        @keyframes b-shake { 0%, 100% { margin-top: -8px; } 50% { margin-top: -2px; } }
 
-        .bite-anim { animation: bob-sink 0.4s infinite; }
-        @keyframes bob-sink { 0%, 100% { transform: translate(-50%, -100%); } 50% { transform: translate(-50%, -85%); } }
-
-        #pause-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .list { background: rgba(0,0,0,0.5); border-radius: 8px; padding: 10px; text-align: left; border: 1px solid #444; }
+        .list { background: rgba(0,0,0,0.6); border-radius: 8px; padding: 10px; text-align: left; border: 1px solid #444; margin-bottom: 10px; }
+        .entry { border-bottom: 1px solid #333; padding: 10px 0; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
-    <audio id="snd-cast" src="https://actions.google.com/sounds/v1/water/splash.ogg"></audio>
-    <audio id="snd-bite" src="https://actions.google.com/sounds/v1/water/water_splash.ogg"></audio>
-    <audio id="snd-catch" src="https://actions.google.com/sounds/v1/foley/fishing_reel_fast.ogg"></audio>
-    <audio id="snd-night" src="https://actions.google.com/sounds/v1/weather/crickets_chirping.ogg" loop></audio>
+<audio id="snd-cast" src="https://actions.google.com/sounds/v1/water/splash.ogg"></audio>
+<audio id="snd-bite" src="https://actions.google.com/sounds/v1/water/water_splash.ogg"></audio>
+<audio id="snd-catch" src="https://actions.google.com/sounds/v1/foley/fishing_reel_fast.ogg"></audio>
 
-    <div class="stats">
-        <div>💰 <span id="money" class="val">500</span>₴ | ⏰ <span id="game-time" class="val">12:00</span></div>
-        <div>⭐ Розряд: <span id="rank" class="val">1</span> | 🧺 <span id="f-count" class="val">0</span></div>
-    </div>
+<div class="stats">
+    <div>💰 <span id="money" class="val">500</span>₴ | ⏰ <span id="game-time" class="val">12:00</span></div>
+    <div>⭐ Р-д: <span id="rank" class="val">1</span> | 🧺 <span id="f-count" class="val">0</span></div>
+    <div class="hunger-wrap"><div id="hunger-fill"></div></div>
+</div>
 
-    <div id="menu" class="screen active">
-        <h1 style="color: var(--gold); text-shadow: 2px 2px black;">ДЕСНА: РИБАЛКА</h1>
-        <button class="btn" onclick="showScreen('locations')">🎣 ВИЇХАТИ НА ДЕСНУ</button>
-        <button class="btn" onclick="showInventory()">🧺 САДОК</button>
-        <button class="btn" onclick="sellFish()">⚖️ ПРОДАТИ УЛОВ</button>
-        <button class="btn" style="background:#b71c1c; font-size: 0.6em;" onclick="resetSave()">🗑️ СКИНУТИ ГРУ</button>
-    </div>
+<div id="menu" class="screen active">
+    <h1 style="color:var(--gold)">ДЕСНА: РР3 STYLE</h1>
+    <button class="btn" onclick="showScreen('locations')">🎣 ЙТИ НА БЕРЕГ</button>
+    <button class="btn" onclick="showScreen('shop')">🛒 МАГАЗИН</button>
+    <button class="btn" onclick="showInventory()">🧺 САДОК</button>
+    <button class="btn" onclick="sellFish()">⚖️ ПРОДАТИ РИБУ</button>
+</div>
 
-    <div id="locations" class="screen">
-        <h3>Оберіть місце на Десні:</h3>
-        <button class="btn" onclick="startFishing('butka.jpg', 'Біля бутки')">📍 Біля бутки</button>
-        <button class="btn" onclick="startFishing('topolki.jpg', 'Топольки')">📍 Топольки</button>
-        <button class="btn" onclick="startFishing('parom.jpg', 'Біля парома')">📍 Біля парома</button>
-        <button class="btn" onclick="startFishing('popopve.jpg', 'Попове')">📍 Попове</button>
-        <button class="btn" onclick="startFishing('sohatske.jpg', 'Сохатське')">📍 Сохатське</button>
-        <button class="btn" style="background: #333;" onclick="backToMenu()">⬅️ Назад</button>
-    </div>
+<div id="locations" class="screen">
+    <h3>Оберіть локацію:</h3>
+    <button class="btn" onclick="startFishing('butka.jpg', 'Біля бутки')">Біля бутки</button>
+    <button class="btn" onclick="startFishing('topolki.jpg', 'Топольки')">Топольки</button>
+    <button class="btn" onclick="startFishing('parom.jpg', 'Біля парома')">Біля парома</button>
+    <button class="btn" onclick="startFishing('popopve.jpg', 'Попове')">Попове</button>
+    <button class="btn" onclick="startFishing('sohatske.jpg', 'Сохатське')">Сохатське</button>
+    <button class="btn" style="background:#333" onclick="showScreen('menu')">Назад</button>
+</div>
 
-    <div id="game" class="screen" style="padding:0;">
-        <div id="game-view">
-            <div id="night-overlay"></div>
-            <div id="pause-overlay">
-                <h2 style="color:gold">ПАУЗА</h2>
-                <button class="btn" style="width: 200px;" onclick="togglePause()">ПРОДОВЖИТИ</button>
-            </div>
-            
-            <div id="bobber-container">
-                <div id="ant" class="p-antenna"></div>
-                <div class="p-body"></div>
-            </div>
-
-            <div id="g-status" style="padding:15px; font-weight:bold; text-shadow: 2px 2px black; font-size: 1.3em; position:relative; z-index:10;"></div>
-            <button onclick="togglePause()" style="position:absolute; top:10px; right:10px; z-index:20; background:rgba(0,0,0,0.6); color:white; border:1px solid gold; padding:8px; border-radius:5px;">⏸️ ПАУЗА</button>
+<div id="game" class="screen" style="padding:0;">
+    <div id="game-view" onpointerdown="handleTap(event)">
+        <div id="night-overlay"></div>
+        <div id="rod"></div>
+        <div id="line"></div>
+        <div id="bobber">
+            <div id="ant" class="ant"></div>
+            <div class="bod"></div>
         </div>
-        <button id="cast-btn" class="btn" style="height:100px; font-size: 1.5em;" onclick="handleCast()">ЗАКИНУТИ</button>
-        <button class="btn" style="width: 40%; background: #333;" onclick="confirmExit()">В МЕНЮ</button>
+        <div id="g-status" style="padding:10px; font-weight:bold; text-shadow: 2px 2px black;"></div>
+        <div style="position:absolute; bottom:5px; left:5px; font-size: 0.7em; opacity: 0.7;">* Натисни на воду, щоб закинути</div>
     </div>
+    <button id="pull-btn" class="btn" style="height:80px; display:none;" onclick="pull()">ТЯГНИ!</button>
+    <button class="btn" onclick="backToMenu()">В МЕНЮ</button>
+</div>
 
-    <div id="inventory" class="screen">
-        <h3>Мій садок:</h3>
-        <div id="fish-list" class="list"></div>
-        <button class="btn" onclick="backToMenu()">Назад</button>
+<div id="shop" class="screen">
+    <h3>Магазин</h3>
+    <div class="list">
+        <div class="entry">🥖 Хліб (Голод +30) <button onclick="buy(1, 30, 40)">40₴</button></div>
+        <div class="entry">🥓 Сало (Голод +70) <button onclick="buy(1, 70, 120)">120₴</button></div>
+        <div class="entry">🧵 Нова ліска (Р-2) <button onclick="buy(2, 2, 500)">500₴</button></div>
     </div>
+    <button class="btn" onclick="showScreen('menu')">Назад</button>
+</div>
 
-    <script>
-        let p = JSON.parse(localStorage.getItem('desna_ultra_save')) || { money: 500, xp: 0, rank: 1, inv: [], hr: 12, min: 0 };
-        let isPaused = false, state = 'idle', timer;
+<div id="inventory" class="screen">
+    <h3>Улов</h3>
+    <div id="fish-list" class="list"></div>
+    <button class="btn" onclick="showScreen('menu')">Назад</button>
+</div>
 
-        function save() { localStorage.setItem('desna_ultra_save', JSON.stringify(p)); }
+<script>
+    let p = JSON.parse(localStorage.getItem('desna_rr3_save')) || { money: 500, xp: 0, rank: 1, inv: [], hr: 12, hng: 100, gear: 1 };
+    let state = 'idle', timer, curX, curY;
 
-        // ІГРОВИЙ ЧАС
-        setInterval(() => {
-            if (isPaused) return;
-            p.min += 5;
-            if (p.min >= 60) { p.min = 0; p.hr++; }
-            if (p.hr >= 24) p.hr = 0;
-            updateTimeEffect();
-            updateUI();
-        }, 3000); // 1 ігрова година = ~36 секунд
+    function save() { localStorage.setItem('desna_rr3_save', JSON.stringify(p)); }
 
-        function updateTimeEffect() {
-            let over = document.getElementById('night-overlay');
-            let ant = document.getElementById('ant');
-            let sndNight = document.getElementById('snd-night');
-            
-            let displayTime = (p.hr < 10 ? '0' : '') + p.hr + ":" + (p.min < 10 ? '0' : '') + p.min;
-            document.getElementById('game-time').innerText = displayTime;
-
-            if (p.hr >= 21 || p.hr < 5) {
-                over.style.opacity = "1";
-                ant.classList.add('neon-glow');
-                if(sndNight.paused) sndNight.play();
-            } else {
-                over.style.opacity = "0";
-                ant.classList.remove('neon-glow');
-                sndNight.pause();
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('money').innerText = Math.floor(p.money);
-            document.getElementById('rank').innerText = p.rank;
-            document.getElementById('f-count').innerText = p.inv.length;
-            save();
-        }
-
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
-
-        function togglePause() {
-            if (state === 'idle') return;
-            isPaused = !isPaused;
-            document.getElementById('pause-overlay').style.display = isPaused ? 'flex' : 'none';
-            if (isPaused) clearTimeout(timer);
-            else {
-                if (state === 'wait') timer = setTimeout(triggerBite, 2000);
-                else if (state === 'bite') timer = setTimeout(triggerMiss, 1000);
-            }
-        }
-
-        function startFishing(img, name) {
-            document.getElementById('game-view').style.backgroundImage = `url('${img}')`;
-            showScreen('game');
-            resetCast();
-            updateTimeEffect();
-        }
-
-        function handleCast() {
-            if (isPaused) return;
-            let b = document.getElementById('bobber-container');
-            let btn = document.getElementById('cast-btn');
-
-            if (state === 'idle') {
-                state = 'wait';
-                btn.innerText = "ЧЕКАЄМО...";
-                b.style.display = 'block';
-                document.getElementById('snd-cast').play();
-                document.getElementById('g-status').innerText = "";
-                timer = setTimeout(triggerBite, 2000 + Math.random() * 5000);
-            } else if (state === 'bite') {
-                document.getElementById('snd-catch').play();
-                catchFish();
-            }
-        }
-
-        function triggerBite() {
-            if (isPaused) return;
-            state = 'bite';
-            document.getElementById('cast-btn').innerText = "ТЯГНИ!!!";
-            document.getElementById('bobber-container').classList.add('bite-anim');
-            document.getElementById('snd-bite').play();
-            timer = setTimeout(triggerMiss, 1500);
-        }
-
-        function triggerMiss() {
-            if (isPaused) return;
-            document.getElementById('g-status').innerText = "Зірвалася...";
-            resetCast();
-        }
-
-        function catchFish() {
-            clearTimeout(timer);
-            let fishArr = ["Карась", "Плітка", "Окунь", "Лящ", "Короп"];
-            if (p.hr >= 21 || p.hr < 5) fishArr.push("Сом", "Судак"); // Нічна риба
-            
-            let fish = fishArr[Math.floor(Math.random()*fishArr.length)];
-            let w = (Math.random() * (p.rank * 1.5) + 0.3).toFixed(2);
-            
-            p.inv.push({n: fish, w: parseFloat(w)});
-            p.xp += 70; p.rank = Math.floor(p.xp/700)+1;
-            
-            document.getElementById('g-status').innerText = `🐟 ${fish} (${w} кг)!`;
-            resetCast();
-            updateUI();
-        }
-
-        function resetCast() {
-            state = 'idle';
-            isPaused = false;
-            document.getElementById('pause-overlay').style.display = 'none';
-            document.getElementById('cast-btn').innerText = "ЗАКИНУТИ";
-            document.getElementById('bobber-container').style.display = 'none';
-            document.getElementById('bobber-container').classList.remove('bite-anim');
-            clearTimeout(timer);
-        }
-
-        function sellFish() {
-            if (!p.inv.length) return alert("Садок порожній!");
-            let sum = p.inv.reduce((a, f) => a + (f.w * 100), 0);
-            p.money += sum; p.inv = []; 
-            updateUI();
-            alert("Ви продали рибу за " + Math.floor(sum) + "₴");
-        }
-
-        function showInventory() {
-            let l = document.getElementById('fish-list');
-            l.innerHTML = p.inv.length ? p.inv.map(f => `<div style="padding:5px; border-bottom:1px solid #333;"><b>${f.n}</b> - ${f.w} кг</div>`).join("") : "Порожньо";
-            showScreen('inventory');
-        }
-
-        function resetSave() { if(confirm("Скинути гру?")) { localStorage.clear(); location.reload(); } }
-        function backToMenu() { resetCast(); showScreen('menu'); }
-        function confirmExit() { if(confirm("В меню?")) backToMenu(); }
-
+    // Годинник та голод
+    setInterval(() => {
+        p.min = (p.min || 0) + 5;
+        if(p.min >= 60) { p.min = 0; p.hr = (p.hr + 1) % 24; }
+        p.hng = Math.max(0, p.hng - 0.3);
         updateUI();
-        updateTimeEffect();
-    </script>
+    }, 4000);
+
+    function updateUI() {
+        document.getElementById('money').innerText = Math.floor(p.money);
+        document.getElementById('rank').innerText = p.rank;
+        document.getElementById('f-count').innerText = p.inv.length;
+        document.getElementById('hunger-fill').style.width = p.hng + "%";
+        document.getElementById('game-time').innerText = (p.hr < 10 ? '0' : '') + p.hr + ":00";
+        
+        // Ніч
+        let night = document.getElementById('night-overlay');
+        night.style.opacity = (p.hr >= 21 || p.hr < 5) ? "1" : "0";
+        document.getElementById('ant').className = (p.hr >= 21 || p.hr < 5) ? "ant glow" : "ant";
+        save();
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function buy(type, val, cost) {
+        if(p.money < cost) return alert("Немає грошей!");
+        p.money -= cost;
+        if(type === 1) p.hng = Math.min(100, p.hng + val);
+        else p.gear = val;
+        updateUI();
+    }
+
+    function startFishing(img, name) {
+        document.getElementById('game-view').style.backgroundImage = `url('${img}')`;
+        showScreen('game');
+        resetCast();
+    }
+
+    function handleTap(e) {
+        if(state !== 'idle') return;
+        if(p.hng < 10) return alert("Ти занадто голодний! Поїж.");
+
+        let rect = e.target.getBoundingClientRect();
+        curX = e.clientX - rect.left;
+        curY = e.clientY - rect.top;
+
+        cast(curX, curY);
+    }
+
+    function cast(x, y) {
+        state = 'wait';
+        let b = document.getElementById('bobber');
+        let l = document.getElementById('line');
+        let rod = document.getElementById('rod');
+
+        b.style.left = x + "px";
+        b.style.top = y + "px";
+        b.style.display = 'block';
+        document.getElementById('snd-cast').play();
+
+        // Малюємо ліску від вудки до поплавка
+        l.style.display = 'block';
+        l.style.left = (window.innerWidth) + "px"; 
+        l.style.top = (window.innerHeight * 0.5) + "px"; 
+
+        timer = setTimeout(triggerBite, 2000 + Math.random() * 4000);
+    }
+
+    function triggerBite() {
+        state = 'bite';
+        document.getElementById('bobber').classList.add('bite-anim');
+        document.getElementById('pull-btn').style.display = 'block';
+        document.getElementById('snd-bite').play();
+        timer = setTimeout(() => { if(state==='bite') { alert("Зірвалась!"); resetCast(); }}, 2000);
+    }
+
+    function pull() {
+        if(state !== 'bite') return;
+        clearTimeout(timer);
+        document.getElementById('snd-catch').play();
+        
+        let fishArr = ["Карась", "Плітка", "Окунь", "Лящ", "Короп"];
+        if(p.hr >= 21 || p.hr < 5) fishArr = ["Сом", "Судак", "Лящ"];
+        
+        let fish = fishArr[Math.floor(Math.random()*fishArr.length)];
+        let w = (Math.random() * p.gear + 0.2).toFixed(2);
+        
+        p.inv.push({n: fish, w: parseFloat(w)});
+        p.xp += 50; p.rank = Math.floor(p.xp/500)+1;
+        p.hng -= 3;
+        
+        alert(`Витягнув! ${fish} (${w} кг)`);
+        resetCast();
+        updateUI();
+    }
+
+    function resetCast() {
+        state = 'idle';
+        document.getElementById('bobber').style.display = 'none';
+        document.getElementById('bobber').classList.remove('bite-anim');
+        document.getElementById('pull-btn').style.display = 'none';
+        document.getElementById('line').style.display = 'none';
+        clearTimeout(timer);
+    }
+
+    function sellFish() {
+        if(!p.inv.length) return alert("Садок порожній!");
+        let sum = p.inv.reduce((a, f) => a + (f.w * 110), 0);
+        p.money += sum; p.inv = [];
+        updateUI();
+        alert(`Продано на ${Math.floor(sum)}₴`);
+    }
+
+    function showInventory() {
+        let l = document.getElementById('fish-list');
+        l.innerHTML = p.inv.length ? p.inv.map(f => `<div class="entry">${f.n} <span>${f.w} кг</span></div>`).join("") : "Порожньо";
+        showScreen('inventory');
+    }
+
+    function backToMenu() { resetCast(); showScreen('menu'); }
+
+    updateUI();
+</script>
 </body>
 </html>
