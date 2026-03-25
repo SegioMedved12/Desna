@@ -49,6 +49,29 @@ height:100%;
 pointer-events:none;
 transition: background 1s linear;
 }
+        #game-popup{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#2d1b17;
+border:2px solid #ffcc80;
+padding:20px;
+z-index:999;
+display:none;
+text-align:center;
+border-radius:10px;
+box-shadow:0 0 20px black;
+}
+
+#game-popup button{
+margin-top:10px;
+padding:8px 20px;
+background:#4e342e;
+border:1px solid #ffcc80;
+color:white;
+cursor:pointer;
+}
     </style>
 </head>
 <body>
@@ -150,7 +173,10 @@ transition: background 1s linear;
     <div id="fish-list" style="text-align: left; padding: 10px;"></div>
     <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
 </div>
-
+<div id="game-popup">
+    <div id="popup-text"></div>
+    <button onclick="closePopup()">OK</button>
+</div>
 <script>
 
      const MUSIC = [
@@ -282,8 +308,8 @@ setInterval(() => {
         tension = Math.max(0, tension);
 
         if(tension > 100){
-
-            alert("💥 ОБРИВ!");
+      
+            showPopup("💥 ОБРИВ ЛІСКИ!");
             resetGame();
 
         }
@@ -338,18 +364,18 @@ setInterval(() => {
 
     function buy(cat, i) {
         let it = GEAR_DATA[cat][i];
-        if(p.money < it.p) return alert("Мало грошей!");
+        if(p.money < it.p) return showPopup("Мало грошей!");
         p.money -= it.p;
         
         if(cat === 'baits') { 
             p.baits[it.n] = (p.baits[it.n] || 0) + 10;
-            alert(`Придбано 10 шт. наживки: ${it.n}`);
+            showPopup(`Придбано 10 шт. наживки: ${it.n}`);
         } else if(cat === 'food') { 
             p.food[it.n] = (p.food[it.n] || 0) + 1;
-            alert(`У рюкзак додано: ${it.n}`);
+            showPopup(`У рюкзак додано: ${it.n}`);
         } else { 
             p.ownedGear[cat].push(i);
-            alert(`Снасть ${it.n} додана в арсенал!`);
+            showPopup(`Снасть ${it.n} додана в арсенал!`);
         }
         updateUI();
         switchShop(cat);
@@ -403,7 +429,7 @@ setInterval(() => {
             p.hng = Math.min(100, p.hng + it.h);
             p.xp += it.xp;
             p.rank = Math.floor(p.xp/1000)+1;
-            alert(`Ви використали: ${name}`);
+            showPopup(`Ви використали: ${name}`);
             renderBackpack();
             updateUI();
         }
@@ -417,8 +443,8 @@ setInterval(() => {
 
     function cast(e) {
         if(state !== 'idle') return;
-        if(!p.baits[p.selBait] || p.baits[p.selBait] <= 0) return alert("Виберіть наживку в рюкзаку!");
-        if(p.hng < 5) return alert("Ти занадто голодний, щоб кидати вудку!");
+        if(!p.baits[p.selBait] || p.baits[p.selBait] <= 0) return showPopup("Виберіть наживку в рюкзаку!");
+        if(p.hng < 5) return showPopup("Ти занадто голодний, щоб кидати вудку!");
 
         state = 'wait';
         p.baits[p.selBait]--;
@@ -459,7 +485,7 @@ document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
         if(parseFloat(fishW) > p.stats.maxW) p.stats.maxW = parseFloat(fishW);
         p.xp += Math.floor(fishW * 40);
         p.rank = Math.floor(p.xp/1000)+1;
-        alert(`🐟 Впіймано: ${name} (${fishW} кг)!`);
+        showPopup(`🐟 Впіймано: ${name} (${fishW} кг)!`);
         resetGame();
     }
 
@@ -520,13 +546,20 @@ overlay.style.background = "rgba(0,0,30,0.2)";
 }
 
 }
+function showPopup(text){
+    document.getElementById("popup-text").innerText = text;
+    document.getElementById("game-popup").style.display = "block";
+}
 
+function closePopup(){
+    document.getElementById("game-popup").style.display = "none";
+}
     function resetGame() { state = 'idle'; document.getElementById('bobber').style.display = 'none'; document.getElementById('fight-ui').style.display = 'none'; document.getElementById('rod-visual').style.display = 'none'; document.getElementById('s-reel').pause(); progress = 0; tension = 0; }
     function renderAchs() { document.getElementById('ach-container').innerHTML = ACHS.map(a => `<div class="ach-card ${p.unlockedAchs.includes(a.id)?'ach-unlocked':''}"><b>${a.n}</b><br>${a.d}</div>`).join(''); }
-    function checkAchs() { ACHS.forEach(a => { if(!p.unlockedAchs.includes(a.id) && a.c(p)) { p.unlockedAchs.push(a.id); alert("🏆 ДОСЯГНЕННЯ: "+a.n); } }); }
+    function checkAchs() { ACHS.forEach(a => { if(!p.unlockedAchs.includes(a.id) && a.c(p)) { p.unlockedAchs.push(a.id); showPopup("🏆 ДОСЯГНЕННЯ: " + a.n); } }); }
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
-    function sellFish() { let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); alert("Улов продано за "+Math.floor(sum)+"₴"); }
+    function sellFish() { let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У саду порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
