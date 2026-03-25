@@ -6,7 +6,15 @@
     <title>Десна</title>
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
-        body { margin: 0; font-family: 'Tahoma', sans-serif; background: url('Десна.jpg') center/cover no-repeat fixed; color: white; user-select: none; overflow: hidden; touch-action: none; }
+body {
+    margin: 0;
+    font-family: 'Tahoma', sans-serif;
+    background: #0e1a14;
+    color: white;
+    user-select: none;
+    overflow: hidden;
+    touch-action: none;
+}
         
         .stats { background: var(--wood); padding: 5px 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.75em; text-align: center; }
         .val { color: var(--gold); font-weight: bold; }
@@ -14,7 +22,29 @@
         .bar-bg { flex-grow: 1; background: #111; height: 10px; border-radius: 5px; border: 1px solid #555; overflow: hidden; }
         #h-fill { height: 100%; background: #4caf50; width: 100%; transition: 0.3s; }
 
-        .screen { display: none; padding: 10px; text-align: center; height: 90vh; overflow-y: auto; background: #1a1a1a; box-sizing: border-box; }
+        .screen {
+    display: none;
+    padding: 10px;
+    text-align: center;
+    height: 90vh;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
+    box-sizing: border-box;
+}
+      #menu::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+}
+        #menu {
+    position: relative;
+    background: url('Десна.jpg') center/cover no-repeat;
+}
         .active { display: block !important; }
 
         .btn { background: #4e342e; color: white; border: 1.5px solid var(--gold); padding: 10px; margin: 4px auto; width: 95%; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
@@ -255,10 +285,11 @@ cursor:pointer;
 
     let state = 'idle', pullActive = false, tension = 0, progress = 0, fishW = 0;
 
+const TIME_SPEED = 2; // швидкість часу (можеш міняти)
+
 setInterval(() => {
 
-    // час
-    p.min += 10;
+    p.min += TIME_SPEED;
 
     if(p.min >= 60){
         p.min = 0;
@@ -270,12 +301,19 @@ setInterval(() => {
         p.days++;
     }
 
-    // голод
-    p.hng -= 0.3;
+    // голод теж тут логічно
+    p.hng -= 0.1;
     if(p.hng < 0) p.hng = 0;
 
-    // якщо риба клює
-  if(state === 'bite') {
+    updateUI();
+    updateDayNight();
+    checkAchs();
+
+}, 1000);
+
+    setInterval(() => {
+
+    if(state !== 'bite') return;
 
     let rodPower = GEAR_DATA.rods[p.gear.rod].m;
     let linePower = GEAR_DATA.lines[p.gear.line].m;
@@ -313,14 +351,9 @@ setInterval(() => {
         catchFish();
     }
 
-        updateFightUI();
-    }
+    updateFightUI();
 
-    updateUI();
-    updateDayNight();
-    checkAchs();
-
-}, 50);
+}, 100);
 
     function updateUI() {
         document.getElementById('money').innerText = Math.floor(p.money);
