@@ -6,7 +6,7 @@
     <title>Десна</title>
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
-        body { margin: 0; font-family: 'Tahoma', sans-serif; url('Десна.jpg') center/cover no-repeat fixed; color: white; user-select: none; overflow: hidden; touch-action: none; }
+        body { margin: 0; font-family: 'Tahoma', sans-serif; background: url('Десна.jpg') center/cover no-repeat fixed; color: white; user-select: none; overflow: hidden; touch-action: none; }
         
         .stats { background: var(--wood); padding: 5px 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.75em; text-align: center; }
         .val { color: var(--gold); font-weight: bold; }
@@ -275,60 +275,43 @@ setInterval(() => {
     if(p.hng < 0) p.hng = 0;
 
     // якщо риба клює
-    if(state === 'bite') {
+  if(state === 'bite') {
 
-        let rodPower = GEAR_DATA.rods[p.gear.rod].m;
-        let linePower = GEAR_DATA.lines[p.gear.line].m;
-        let reelPower = GEAR_DATA.reels[p.gear.reel].m;
+    let rodPower = GEAR_DATA.rods[p.gear.rod].m;
+    let linePower = GEAR_DATA.lines[p.gear.line].m;
+    let reelPower = GEAR_DATA.reels[p.gear.reel].m;
 
-        let fishPower = fishW * 3;
+    let fishPower = fishW * 3;
 
-        if(pullActive){
+    if(pullActive){
 
-    let pull = rodPower / fishPower;
+        let pull = rodPower / fishPower;
 
-    progress += pull * 0.8;
+        progress += pull * 0.8;
+        tension += fishPower / (linePower * reelPower) * 1.5;
 
-    tension += fishPower / (linePower * reelPower) * 1.5;
+        document.getElementById('s-reel').play();
 
-}
-else{
+    }
+    else{
 
-    progress -= 0.05;
+        progress -= 0.05;
+        tension -= 0.8;
 
-    tension -= 0.8;
+        document.getElementById('s-reel').pause();
+    }
 
+    progress = Math.max(0, Math.min(progress,100));
+    tension = Math.max(0, tension);
 
-}
+    if(tension > 100){
+        showPopup("💥 ОБРИВ ЛІСКИ!");
+        resetGame();
+    }
 
-            document.getElementById('s-reel').play();
-
-        }
-        else{
-
-            progress -= 0.3;
-
-            tension -= 2;
-
-            document.getElementById('s-reel').pause();
-
-        }
-
-        progress = Math.max(0, Math.min(progress,100));
-        tension = Math.max(0, tension);
-
-        if(tension > 100){
-      
-            showPopup("💥 ОБРИВ ЛІСКИ!");
-            resetGame();
-
-        }
-
-        if(progress >= 100){
-
-            catchFish();
-
-        }
+    if(progress >= 100){
+        catchFish();
+    }
 
         updateFightUI();
     }
@@ -337,7 +320,7 @@ else{
     updateDayNight();
     checkAchs();
 
-}, 100);
+}, 50);
 
     function updateUI() {
         document.getElementById('money').innerText = Math.floor(p.money);
