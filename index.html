@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Десна: РР3 Ultimate Backpack</title>
+    <title>Десна</title>
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
-        body { margin: 0; font-family: 'Tahoma', sans-serif; background: var(--dark); color: white; user-select: none; overflow: hidden; touch-action: none; }
+        body { margin: 0; font-family: 'Tahoma', sans-serif; url('Десна.jpg') center/cover no-repeat fixed; color: white; user-select: none; overflow: hidden; touch-action: none; }
         
         .stats { background: var(--wood); padding: 5px 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.75em; text-align: center; }
         .val { color: var(--gold); font-weight: bold; }
@@ -285,11 +285,21 @@ setInterval(() => {
 
         if(pullActive){
 
-            let pull = rodPower / fishPower;
+    let pull = rodPower / fishPower;
 
-            progress += pull * 3;
+    progress += pull * 0.8;
 
-            tension += fishPower / (linePower * reelPower) * 8;
+    tension += fishPower / (linePower * reelPower) * 1.5;
+
+}
+else{
+
+    progress -= 0.05;
+
+    tension -= 0.8;
+
+
+}
 
             document.getElementById('s-reel').play();
 
@@ -327,7 +337,7 @@ setInterval(() => {
     updateDayNight();
     checkAchs();
 
-}, 3000);
+}, 100);
 
     function updateUI() {
         document.getElementById('money').innerText = Math.floor(p.money);
