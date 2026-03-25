@@ -57,7 +57,7 @@ transition: background 1s linear;
 <audio id="s-bite" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
 <audio id="s-reel" src="https://actions.google.com/sounds/v1/foley/fishing_reel_fast.ogg"></audio>
 
-<audio id="bg-music" loop></audio>
+<audio id="bg-music"></audio>
 
  
 
@@ -153,7 +153,7 @@ transition: background 1s linear;
 
 <script>
 
-       const MUSIC = [
+     const MUSIC = [
 "Sergio Medved - 03.08.25(1).mp3",
 "Sergio Medved - 04.01.26.mp3",
 "Sergio Medved - 12.11.25.mp3",
@@ -205,10 +205,10 @@ transition: background 1s linear;
 
     const LOCATIONS = [
         {n: "Біля бутки", img: "butka.jpg", rank: 1},
-        {n: "Топольки", img: "topolki.jpg", rank: 3},
-        {n: "Біля парома", img: "parom.jpg", rank: 6},
-        {n: "Попове", img: "popove.jpg", rank: 12},
-        {n: "Сохатське", img: "sohatske.jpg", rank: 20}
+        {n: "Топольки", img: "topolki.jpg", rank: 2},
+        {n: "Біля парома", img: "parom.jpg", rank: 4},
+        {n: "Попове", img: "popove.jpg", rank: 6},
+        {n: "Сохатське", img: "sohatske.jpg", rank: 10}
     ];
 
     // Ініціалізація
@@ -229,10 +229,10 @@ transition: background 1s linear;
 
     let state = 'idle', pullActive = false, tension = 0, progress = 0, fishW = 0;
 
-  setInterval(() => {
+setInterval(() => {
 
     // час
-    p.min += 10;   // швидше як у РР3
+    p.min += 10;
 
     if(p.min >= 60){
         p.min = 0;
@@ -246,63 +246,62 @@ transition: background 1s linear;
 
     // голод
     p.hng -= 0.3;
-
     if(p.hng < 0) p.hng = 0;
-        if(p.min >= 60) { p.min = 0; p.hr = (p.hr + 1) % 24; p.hng = Math.max(0, p.hng - 2); if(p.hr === 0) p.days++; }
-        if(state === 'bite') {
 
-let rodPower = GEAR_DATA.rods[p.gear.rod].m;
-let linePower = GEAR_DATA.lines[p.gear.line].m;
-let reelPower = GEAR_DATA.reels[p.gear.reel].m;
+    // якщо риба клює
+    if(state === 'bite') {
 
-let fishPower = fishW * 3;
+        let rodPower = GEAR_DATA.rods[p.gear.rod].m;
+        let linePower = GEAR_DATA.lines[p.gear.line].m;
+        let reelPower = GEAR_DATA.reels[p.gear.reel].m;
 
-if(pullActive){
+        let fishPower = fishW * 3;
 
-let pull = rodPower / fishPower;
+        if(pullActive){
 
-progress += pull * 3;
+            let pull = rodPower / fishPower;
 
-tension += fishPower / (linePower * reelPower) * 8;
+            progress += pull * 3;
 
-document.getElementById('s-reel').play();
+            tension += fishPower / (linePower * reelPower) * 8;
 
-}
-else{
+            document.getElementById('s-reel').play();
 
-progress -= 0.3;
-
-tension -= 2;
-
-document.getElementById('s-reel').pause();
-
-}
-
-progress = Math.max(0, Math.min(progress,100));
-tension = Math.max(0, tension);
-
-if(tension > 100){
-
-alert("💥 ОБРИВ!");
-
-resetGame();
-
-}
-
-if(progress >= 100){
-
-catchFish();
-
-}
-
-updateFightUI();
-
-}
         }
-        updateUI();
-      updateDayNight();
-        checkAchs();
-    }, 3000);
+        else{
+
+            progress -= 0.3;
+
+            tension -= 2;
+
+            document.getElementById('s-reel').pause();
+
+        }
+
+        progress = Math.max(0, Math.min(progress,100));
+        tension = Math.max(0, tension);
+
+        if(tension > 100){
+
+            alert("💥 ОБРИВ!");
+            resetGame();
+
+        }
+
+        if(progress >= 100){
+
+            catchFish();
+
+        }
+
+        updateFightUI();
+    }
+
+    updateUI();
+    updateDayNight();
+    checkAchs();
+
+}, 3000);
 
     function updateUI() {
         document.getElementById('money').innerText = Math.floor(p.money);
@@ -435,7 +434,7 @@ updateFightUI();
                 state = 'bite';
                 document.getElementById('s-bite').play();
                 let bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
-                fishW = (Math.random() * (bData.size[1] - bData.size[0]) + bData.size[0]).toFixed(2);
+                fishW = +(Math.random() * (bData.size[1] - bData.size[0]) + bData.size[0]).toFixed(2);
                 document.getElementById('fight-ui').style.display = 'block';
             }
         }, 2000 + Math.random() * 3000);
@@ -464,17 +463,27 @@ document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
         resetGame();
     }
 
-    function playRandomMusic(){
+   let lastTrack = null;
+
+function playRandomMusic(){
 
     let audio = document.getElementById("bg-music");
 
-    let track = MUSIC[Math.floor(Math.random()*MUSIC.length)];
+    let track;
+
+    do{
+        track = MUSIC[Math.floor(Math.random()*MUSIC.length)];
+    }
+    while(track === lastTrack);
+
+    lastTrack = track;
 
     audio.src = track;
 
-    audio.volume = 0.2; // 80% тихіше
+    audio.volume = 0.05;
 
     audio.play();
+}
 
 }
 
