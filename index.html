@@ -59,44 +59,22 @@
 </div>
 
 <div id="shop" class="screen">
-   <h3>РИБАЛЬСЬКИЙ МАГАЗИН</h3>
-    <div class="shop-list" id="gear-items">
-        <div class="cat-title">ВУДКИ ТА ФІДЕРИ</div>
-        <div class="shop-item">Вудка "Бамбук" (1кг) <span>50₴</span> <button onclick="buy('gear', 1, 50)">Купити</button></div>
-        <div class="shop-item">Фідер "Десна" (5кг) <span>400₴</span> <button onclick="buy('gear', 5, 400)">Купити</button></div>
-        <div class="shop-item">Спінінг "Короп" (15кг) <span>1800₴</span> <button onclick="buy('gear', 15, 1800)">Купити</button></div>
-        <div class="shop-item">Тролінг "Київ" (40кг) <span>5000₴</span> <button onclick="buy('gear', 40, 5000)">Купити</button></div>
-        <div class="shop-item">Titan PRO (100кг) <span>15000₴</span> <button onclick="buy('gear', 100, 15000)">Купити</button></div>
-        <div class="cat-title">КОТУШКИ</div>
-        <div class="shop-item">Невська 10% <span>150₴</span> <button onclick="buy('reel', 0.1, 150)">Купити</button></div>
-        <div class="shop-item">Кобі 30% <span>600₴</span> <button onclick="buy('reel', 0.3, 600)">Купити</button></div>
-        <div class="shop-item">Shimano 60% <span>2000₴</span> <button onclick="buy('reel', 0.6, 2000)">Купити</button></div>
-        <div class="shop-item">Daiwa 90% <span>4500₴</span> <button onclick="buy('reel', 0.9, 4500)">Купити</button></div>
-        <div class="shop-item">PowerDrag 150% <span>9000₴</span> <button onclick="buy('reel', 1.5, 9000)">Купити</button></div>
-
+    <h3>МАГАЗИН</h3>
+    <div class="shop-cat">ПРОДУКТИ ТА БАР</div>
+    <div class="list">
+        <div class="item-row">🥖 Хліб (+20 голод) <span>30₴</span> <button onclick="buy('food', 20, 30)">Взяти</button></div>
+        <div class="item-row">🥓 Сало (+60 голод) <span>120₴</span> <button onclick="buy('food', 60, 120)">Взяти</button></div>
+        <div class="item-row">🍺 Пиво (+50 XP) <span>80₴</span> <button onclick="buy('alc', 50, 80)">Взяти</button></div>
+        <div class="item-row">🥃 Горілка (+150 XP) <span>200₴</span> <button onclick="buy('alc', 150, 200)">Взяти</button></div>
+    </div>
+    <div class="shop-cat">СНАСТІ (ПОТРІБЕН РОЗРЯД)</div>
+    <div class="list">
+        <div class="item-row">🧵 Ліска 3кг (Р-д 1) <span>300₴</span> <button onclick="buy('gear', 3, 300, 1)">Купити</button></div>
+        <div class="item-row">🧵 Ліска 8кг (Р-д 3) <span>900₴</span> <button onclick="buy('gear', 8, 900, 3)">Купити</button></div>
+        <div class="item-row">🎣 Катушка "Окунь" (Р-д 5) <span>2500₴</span> <button onclick="buy('gear', 20, 2500, 5)">Купити</button></div>
     </div>
     <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
 </div>
-<button class="btn" onclick="showScreen('menu')">НАЗАД</button>
-</div>
-
-<div id="shop-food" class="screen">
-    <h3>ПРОДУКТИ ТА БАР</h3>
-    <div class="shop-list">
-        <div class="cat-title">ЇЖА</div>
-        <div class="shop-item">🥖 Хліб (+15) <span>20₴</span> <button onclick="buy('food', 15, 20)">Взяти</button></div>
-        <div class="shop-item">🍪 Печиво (+30) <span>50₴</span> <button onclick="buy('food', 30, 50)">Взяти</button></div>
-        <div class="shop-item">🥫 Консерва (+60) <span>110₴</span> <button onclick="buy('food', 60, 110)">Взяти</button></div>
-        <div class="shop-item">🥓 Сало (+90) <span>200₴</span> <button onclick="buy('food', 90, 200)">Взяти</button></div>
-        <div class="shop-item">🍲 Обід (+100) <span>350₴</span> <button onclick="buy('food', 100, 350)">Взяти</button></div>
-        <div class="cat-title">БАР</div>
-        <div class="shop-item">🍺 Пиво (+EXP) <span>70₴</span> <button onclick="buy('alc', 40, 70)">Випити</button></div>
-        <div class="shop-item">🍷 Вино (+EXP) <span>180₴</span> <button onclick="buy('alc', 120, 180)">Випити</button></div>
-        <div class="shop-item">🥃 Горілка (+EXP) <span>250₴</span> <button onclick="buy('alc', 300, 250)">Випити</button></div>
-        <div class="shop-item">🏺 Коньяк (+EXP) <span>600₴</span> <button onclick="buy('alc', 800, 600)">Випити</button></div>
-        <div class="shop-item">🍾 Шампанське (+EXP) <span>1200₴</span> <button onclick="buy('alc', 2000, 1200)">Випити</button></div>
-    </div>
-    <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
 
 <div id="achs" class="screen">
     <h3>МОЇ ДОСЯГНЕННЯ</h3>
