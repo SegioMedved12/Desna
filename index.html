@@ -275,8 +275,8 @@ cursor:pointer;
     ];
 
     const LOCATIONS = [
-        {n: "Біля бутки", img: "butka.jpg", rank: 1},
-        {n: "Топольки", img: "topolki.jpg", rank: 2},
+        {n: "Топольки", img: "topolki.jpg", rank: 1},
+        {n: "Біля бутки", img: "butka.jpg", rank: 2},
         {n: "Біля парома", img: "parom.jpg", rank: 4},
         {n: "Попове", img: "popove.jpg", rank: 6},
         {n: "Сохатське", img: "sohatske.jpg", rank: 10}
@@ -334,22 +334,22 @@ setInterval(() => {
     let linePower = GEAR_DATA.lines[p.gear.line].m;
     let reelPower = GEAR_DATA.reels[p.gear.reel].m;
 
-    let fishPower = fishW * 3;
+    let fishPower = fishW * 1.5;
 
     if(pullActive){
 
         let pull = rodPower / fishPower;
 
-        progress += pull * 0.8;
-        tension += fishPower / (linePower * reelPower) * 1.5;
+        progress += pull * 1.5;
+        tension += fishPower / (linePower * reelPower) * 0.5;
 
         document.getElementById('s-reel').play();
 
     }
     else{
 
-        progress -= 0.05;
-        tension -= 0.8;
+        progress -= 0.02;
+        tension -= 0.3;
 
         document.getElementById('s-reel').pause();
     }
