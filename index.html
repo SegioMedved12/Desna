@@ -110,6 +110,16 @@ border:1px solid #ffcc80;
 color:white;
 cursor:pointer;
 }
+
+#water{
+position:absolute;
+bottom:0;
+left:0;
+width:100%;
+height:45%;   /* висота води */
+background:rgba(0,80,150,0.15);
+border-top:2px solid rgba(255,255,255,0.2);
+}
     </style>
 </head>
 <body>
@@ -139,7 +149,8 @@ cursor:pointer;
     </div>
     <button class="btn" onclick="showScreen('locs')">➡️ НА ВОДУ</button>
     <button class="btn" onclick="showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
-    <button class="btn" onclick="showScreen('shop')">🛒 МАГАЗИН</button>
+    <button class="btn" onclick="showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
+    <button class="btn" onclick="showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
     <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
@@ -165,20 +176,35 @@ cursor:pointer;
 
     <button class="btn" onclick="showScreen('menu')">НАЗАД В МЕНЮ</button>
 </div>
+<div id="fishshop" class="screen">
+<h3>🎣 РИБАЛЬСЬКИЙ МАГАЗИН</h3>
 
-<div id="shop" class="screen">
-    <h3>МАГАЗИН</h3>
-    <div class="tabs">
-        <div class="tab active-tab" onclick="switchShop('baits')">Наживки</div>
-        <div class="tab" onclick="switchShop('rods')">Вудки</div>
-        <div class="tab" onclick="switchShop('reels')">Катушки</div>
-        <div class="tab" onclick="switchShop('lines')">Ліски</div>
-        <div class="tab" onclick="switchShop('food')">Їжа</div>
-    </div>
-    <div id="shop-items"></div>
-    <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+<div class="tabs">
+<div class="tab active-tab" onclick="switchShop('baits')">Наживки</div>
+<div class="tab" onclick="switchShop('rods')">Вудки</div>
+<div class="tab" onclick="switchShop('reels')">Катушки</div>
+<div class="tab" onclick="switchShop('lines')">Ліски</div>
 </div>
 
+<div id="shop-items"></div>
+
+<button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+</div>
+
+    <div id="foodshop" class="screen">
+
+<h3>🍖 ПРОДУКТОВИЙ МАГАЗИН</h3>
+
+<div class="tabs">
+<div class="tab active-tab" onclick="switchShop('food')">Їжа</div>
+<div class="tab" onclick="switchShop('alcohol')">Алкоголь</div>
+</div>
+
+<div id="shop-items"></div>
+
+<button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+
+</div>
 <div id="achs" class="screen">
     <h3>МОЇ ДОСЯГНЕННЯ</h3>
     <div id="ach-container"></div>
@@ -193,7 +219,12 @@ cursor:pointer;
 
 <div id="game" class="screen" style="padding:0;">
     <div id="game-view" onclick="cast(event)">
-        <div id="day-overlay"></div>
+    <div id="day-overlay"></div>
+
+    <div id="water"></div> <!-- ВОДА -->
+
+    <div id="rod-visual"></div>
+    <div id="bobber"><div class="ant"></div><div class="bod"></div></div>
         <div id="rod-visual"></div>
         <div id="bobber"><div class="ant"></div><div class="bod"></div></div>
         <div id="fight-ui">
@@ -234,52 +265,130 @@ cursor:pointer;
 "Sergio Medved - 24.01.26(2).mp3",
 "Sergio Medved - 25.10.25(1).mp3",
 "Sergio Medved - 25.11.25.mp3",
+"Sergio Medved - 04.11.23.mp3",
+"Sergio Medved - 09.01.26.mp3",
 "Sergio Medved - 25.12.25.mp3"
 ];
     
     const GEAR_DATA = {
-        baits: [
-            {n: "Хліб", p: 20, target: ["Плітка", "Карась"], size: [0.1, 1.2]},
-            {n: "Черв'як", p: 50, target: ["Окунь", "Карась", "Йорж"], size: [0.2, 2.5]},
-            {n: "Тісто", p: 80, target: ["Лящ", "Плітка"], size: [0.5, 4.5]},
-            {n: "Кукурудза", p: 150, target: ["Короп", "Білий Амур"], size: [2, 12]},
-            {n: "Бойли", p: 300, target: ["Трофейний Короп", "Сом"], size: [8, 70]}
-        ],
-        rods: [
-            {n: "Bamboo Stick", p: 200, m: 2, r: 1}, {n: "River Star", p: 1500, m: 10, r: 3},
-            {n: "Carbon Pro", p: 5000, m: 35, r: 7}, {n: "Titan Deep", p: 18000, m: 150, r: 12},
-            {n: "Ultimate Desna", p: 60000, m: 500, r: 20}
-        ],
-        reels: [
-            {n: "Old Wheel", p: 150, m: 1.2, r: 1}, {n: "Spark 100", p: 1200, m: 3, r: 4},
-            {n: "Sea Master", p: 5000, m: 8, r: 8}, {n: "Turbo Reel", p: 15000, m: 25, r: 15},
-            {n: "Quantum X", p: 40000, m: 60, r: 20}
-        ],
-        lines: [
-            {n: "Mono 2kg", p: 50, m: 2, r: 1}, {n: "Mono 10kg", p: 500, m: 10, r: 5},
-            {n: "Braid 35kg", p: 1500, m: 35, r: 10}, {n: "Heavy Line", p: 6000, m: 120, r: 15},
-            {n: "Steel Wire", p: 20000, m: 450, r: 22}
-        ],
-        food: [
-            {n: "🥖 Хліб", p: 30, h: 20, xp: 0}, 
-            {n: "🥓 Сало", p: 120, h: 60, xp: 0}, 
-            {n: "🥃 Горілка", p: 250, h: -10, xp: 200}
-        ]
-    };
+        fish: [
+  {n: "Плітка", min: 0.1, max: 1.5, p: 10},
+  {n: "Карась", min: 0.2, max: 2.0, p: 15},
+  {n: "Срібний карась", min: 0.3, max: 2.5, p: 20},
+  {n: "Линь", min: 0.5, max: 3.0, p: 25},
+  {n: "Линок", min: 0.4, max: 2.8, p: 20},
+  {n: "Щука", min: 1.0, max: 8.0, p: 50},
+  {n: "Окунь", min: 0.3, max: 1.5, p: 20},
+  {n: "Йорж", min: 0.2, max: 1.2, p: 15},
+  {n: "Краснопірка", min: 0.2, max: 1.0, p: 12},
+  {n: "Лящ", min: 0.5, max: 4.5, p: 30},
+  {n: "Короп", min: 1.0, max: 12.0, p: 50},
+  {n: "Білий амур", min: 2.0, max: 12.0, p: 60},
+  {n: "Сазан", min: 3.0, max: 15.0, p: 70},
+  {n: "Сом", min: 5.0, max: 40.0, p: 100},
+  {n: "Густера", min: 0.3, max: 2.0, p: 18},
+  {n: "Уклейка", min: 0.1, max: 0.8, p: 10},
+],
+       baits: [
+  {n: "Хліб", p: 20,
+   target: ["Плітка","Карась","Срібний карась","Краснопірка","Уклейка"],
+   size: [0.1, 1.2]},
 
-    const ACHS = [
-        {id: 1, n: "Перші кроки", d: "Підняти 2 розряд", c: (p) => p.rank >= 2},
-        {id: 2, n: "Завзятий", d: "Прожити 7 ігрових днів", c: (p) => p.days >= 7},
-        {id: 3, n: "Важка вага", d: "Впіймати рибу > 5кг", c: (p) => p.stats.maxW >= 5},
-        {id: 4, n: "Майстер", d: "Впіймати 50 риб", c: (p) => p.stats.totalF >= 50}
-    ];
+  {n: "Черв'як", p: 50,
+   target: ["Окунь","Йорж","Карась","Линь","Линок","Плітка","Щука"],
+   size: [0.2, 2.5]},
+
+  {n: "Тісто", p: 80,
+   target: ["Лящ","Плітка","Карась","Густера","Краснопірка"],
+   size: [0.5, 4.5]},
+
+  {n: "Кукурудза", p: 150,
+   target: ["Короп","Білий амур","Сазан","Лящ"],
+   size: [2, 12]},
+
+  {n: "Бойли", p: 300,
+   target: ["Трофейний короп","Сом","Щука","Сазан"],
+   size: [8, 70]}
+],
+        const rods = [
+    {n: "Bamboo Stick", p: 200, m: 2, r: 1},
+    {n: "River Star", p: 1500, m: 10, r: 3},
+    {n: "Carbon Pro", p: 5000, m: 35, r: 7},
+    {n: "Titan Deep", p: 18000, m: 150, r: 12},
+    {n: "Ultimate Desna", p: 60000, m: 500, r: 20}
+],
+
+const reels = [
+    {n: "Old Wheel", p: 150, m: 1.2, r: 1},
+    {n: "Spark 100", p: 1200, m: 3, r: 4},
+    {n: "Sea Master", p: 5000, m: 8, r: 8},
+    {n: "Turbo Reel", p: 15000, m: 25, r: 15},
+    {n: "Quantum X", p: 40000, m: 60, r: 20}
+],
+
+const lines = [
+    {n: "Mono 2kg", p: 50, m: 2, r: 1},
+    {n: "Mono 10kg", p: 500, m: 10, r: 5},
+    {n: "Braid 35kg", p: 1500, m: 35, r: 10},
+    {n: "Heavy Line", p: 6000, m: 120, r: 15},
+    {n: "Steel Wire", p: 20000, m: 450, r: 22}
+],
+      food: [
+
+{n:"🥖 Хліб", p:30, h:20, xp:0},
+{n:"🥓 Сало", p:120, h:60, xp:0},
+{n:"🍲 Борщ", p:180, h:70, xp:10},
+{n:"🥔 Картопля", p:60, h:25, xp:0},
+{n:"🍗 Курка", p:220, h:80, xp:20},
+{n:"🍖 Шашлик", p:300, h:90, xp:30},
+{n:"🧀 Сир", p:140, h:40, xp:5},
+{n:"🍞 Бутерброд", p:100, h:35, xp:5}
+
+],
+
+alcohol: [
+
+{n:"🥃 Горілка", p:250, h:-10, xp:200},
+{n:"🍺 Пиво", p:120, h:5, xp:40},
+{n:"🍷 Вино", p:300, h:-5, xp:150},
+{n:"🥃 Самогон", p:180, h:-20, xp:250},
+{n:"🍸 Коньяк", p:600, h:-30, xp:400}
+
+]
+    };
+const ACHS = [
+
+{ id:1,  n:"Перші кроки", d:"Підняти 2 розряд", c:(p)=>p.rank>=2, r:100 },
+{ id:2,  n:"Завзятий", d:"Прожити 7 ігрових днів", c:(p)=>p.days>=7, r:150 },
+{ id:3,  n:"Важка вага", d:"Впіймати рибу >5кг", c:(p)=>p.stats.maxW>=5, r:200 },
+{ id:4,  n:"Майстер", d:"Впіймати 50 риб", c:(p)=>p.stats.totalF>=50, r:250 },
+
+{ id:5,  n:"Профі", d:"Підняти 5 розряд", c:(p)=>p.rank>=5, r:400 },
+{ id:6,  n:"Рибалка", d:"Впіймати 10 риб", c:(p)=>p.stats.totalF>=10, r:120 },
+{ id:7,  n:"Досвідчений", d:"Впіймати 25 риб", c:(p)=>p.stats.totalF>=25, r:180 },
+{ id:8,  n:"Колекціонер", d:"Впіймати 100 риб", c:(p)=>p.stats.totalF>=100, r:600 },
+
+{ id:9,  n:"Гігант", d:"Впіймати рибу >10кг", c:(p)=>p.stats.maxW>=10, r:500 },
+{ id:10, n:"Трофей", d:"Впіймати рибу >20кг", c:(p)=>p.stats.maxW>=20, r:1200 },
+
+{ id:11, n:"Старий рибак", d:"Прожити 30 днів", c:(p)=>p.days>=30, r:700 },
+{ id:12, n:"Легенда Десни", d:"Підняти 30 розряд", c:(p)=>p.rank>=10, r:1500 },
+
+{ id:13, n:"Багатій", d:"Мати 5000₴", c:(p)=>p.money>=5000, r:1000 },
+{ id:14, n:"Мільйонер", d:"Мати 20000₴", c:(p)=>p.money>=20000, r:3000 },
+
+{ id:15, n:"Абсолютний майстер", d:"Піймати рибу >60кг", c:(p)=>p.stats.maxW>=50, r:5000 }
+
+];
 
     const LOCATIONS = [
         {n: "Топольки", img: "topolki.jpg", rank: 1},
         {n: "Біля бутки", img: "butka.jpg", rank: 2},
         {n: "Біля парома", img: "parom.jpg", rank: 4},
-        {n: "Попове", img: "popove.jpg", rank: 6},
-        {n: "Сохатське", img: "sohatske.jpg", rank: 10}
+        {n: "На холмі ", img: "Kholm.jpg", rank: 6},
+        {n: "Попове", img: "popove.jpg", rank: 8},
+        {n: "Сохатське", img: "sohatske.jpg", rank: 10},
+        {n: "Журавльове", img: "Zhuravlove.jpg", rank: 16}
     ];
 
     // Ініціалізація
@@ -411,8 +520,8 @@ setInterval(() => {
         if(cat === 'baits') { 
             p.baits[it.n] = (p.baits[it.n] || 0) + 10;
             showPopup(`Придбано 10 шт. наживки: ${it.n}`);
-        } else if(cat === 'food') { 
-            p.food[it.n] = (p.food[it.n] || 0) + 1;
+        } else if(cat === 'food' || cat === 'alcohol') { 
+             p.food[item.n] = (p.food[item.n] || 0) + 1;
             showPopup(`У рюкзак додано: ${it.n}`);
         } else { 
             p.ownedGear[cat].push(i);
@@ -424,14 +533,14 @@ setInterval(() => {
 
     function renderBackpack() {
         // Наживки
-        let baitHtml = Object.keys(p.baits).map(name => {
-            if(p.baits[name] <= 0) return '';
+       let baitHtml = Object.keys(p.baits).map(name => {
             return `<div class="item-row">
-                <span>${name} (${p.baits[name]} шт)</span>
-                <button class="btn-small" onclick="selectBait('${name}')" ${p.selBait === name ? 'disabled' : ''}>
-                    ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-                </button>
-            </div>`;
+    <span>${name} (${p.baits[name]} шт)</span>
+    <button class="btn-small" onclick="selectBait('${name}')" 
+        ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
+        ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
+    </button>
+</div>`;
         }).join('') || 'Наживки немає';
         document.getElementById('inv-baits').innerHTML = baitHtml;
 
@@ -482,30 +591,51 @@ setInterval(() => {
         updateUI();
     }
 
-    function cast(e) {
-        if(state !== 'idle') return;
-        if(!p.baits[p.selBait] || p.baits[p.selBait] <= 0) return showPopup("Виберіть наживку в рюкзаку!");
-        if(p.hng < 5) return showPopup("Ти занадто голодний, щоб кидати вудку!");
+   function cast(e){
 
-        state = 'wait';
-        p.baits[p.selBait]--;
-        document.getElementById('s-cast').play();
-        let rect = e.currentTarget.getBoundingClientRect();
-        document.getElementById('bobber').style.left = (e.clientX - rect.left) + "px";
-        document.getElementById('bobber').style.top = (e.clientY - rect.top) + "px";
-        document.getElementById('bobber').style.display = 'block';
-        document.getElementById('rod-visual').style.display = 'block';
-        
-        setTimeout(() => {
-            if(state === 'wait') {
-                state = 'bite';
-                document.getElementById('s-bite').play();
-                let bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
-                fishW = +(Math.random() * (bData.size[1] - bData.size[0]) + bData.size[0]).toFixed(2);
-                document.getElementById('fight-ui').style.display = 'block';
-            }
-        }, 2000 + Math.random() * 3000);
+    if(state !== 'idle') return;
+
+    let rect = e.currentTarget.getBoundingClientRect();
+    let y = e.clientY - rect.top;
+
+    let waterStart = rect.height * 0.55; // де починається вода
+
+    if(y < waterStart){
+        showPopup("🎣 Тут немає води!");
+        return;
     }
+
+    if(!p.baits[p.selBait] || p.baits[p.selBait] <= 0)
+        return showPopup("Виберіть наживку в рюкзаку!");
+
+    if(p.hng < 5)
+        return showPopup("Ти занадто голодний, щоб кидати вудку!");
+
+    state = 'wait';
+    p.baits[p.selBait]--;
+
+    document.getElementById('s-cast').play();
+
+    document.getElementById('bobber').style.left = (e.clientX - rect.left) + "px";
+    document.getElementById('bobber').style.top = (e.clientY - rect.top) + "px";
+    document.getElementById('bobber').style.display = 'block';
+    document.getElementById('rod-visual').style.display = 'block';
+
+    setTimeout(() => {
+
+        if(state === 'wait'){
+
+            state = 'bite';
+            document.getElementById('s-bite').play();
+
+            let bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
+            fishW = +(Math.random() * (bData.size[1] - bData.size[0]) + bData.size[0]).toFixed(2);
+
+            document.getElementById('fight-ui').style.display = 'block';
+        }
+
+    }, 2000 + Math.random() * 3000);
+}
 
     function startPull() { pullActive = true; }
     function stopPull() { pullActive = false; document.getElementById('s-reel').pause(); }
@@ -568,6 +698,27 @@ function playRandomMusic(){
     document.body.removeEventListener("click", startMusic);
 });
 
+    function spawnFish() {
+    let hour = p.hr;
+    let timeTag = (hour >=6 && hour <18) ? "day" : (hour >=18 && hour <22) ? "evening" : "night";
+
+    // фільтруємо рибу за вибраною наживкою та часом доби
+    let possible = FISHES.filter(f => f.bait.includes(p.selBait) && f.time.includes(timeTag));
+
+    if(possible.length === 0) return null;
+
+    // вибір риби по рідкості
+    let total = possible.reduce((sum,f)=>sum+f.rarity,0);
+    let r = Math.random()*total;
+    let acc = 0;
+    for(let f of possible){
+        acc += f.rarity;
+        if(r <= acc){
+            return {...f, weight: +(Math.random()*(f.maxW-f.minW)+f.minW).toFixed(2)};
+        }
+    }
+    return possible[0];
+}
     function updateDayNight(){
 
 let overlay = document.getElementById("day-overlay");
@@ -605,8 +756,39 @@ function closePopup(){
     document.getElementById("game-popup").style.display = "none";
 }
     function resetGame() { state = 'idle'; document.getElementById('bobber').style.display = 'none'; document.getElementById('fight-ui').style.display = 'none'; document.getElementById('rod-visual').style.display = 'none'; document.getElementById('s-reel').pause(); progress = 0; tension = 0; }
-    function renderAchs() { document.getElementById('ach-container').innerHTML = ACHS.map(a => `<div class="ach-card ${p.unlockedAchs.includes(a.id)?'ach-unlocked':''}"><b>${a.n}</b><br>${a.d}</div>`).join(''); }
-    function checkAchs() { ACHS.forEach(a => { if(!p.unlockedAchs.includes(a.id) && a.c(p)) { p.unlockedAchs.push(a.id); showPopup("🏆 ДОСЯГНЕННЯ: " + a.n); } }); }
+  function renderAchs(){
+
+document.getElementById('ach-container').innerHTML =
+ACHS.map(a =>
+
+`<div class="ach-card ${p.unlockedAchs.includes(a.id)?'ach-unlocked':''}">
+<b>${a.n}</b><br>
+${a.d}<br>
+💰 Нагорода: ${a.r}₴
+</div>`
+
+).join('');
+
+}
+    function checkAchs(){
+
+ACHS.forEach(a=>{
+
+if(!p.unlockedAchs.includes(a.id) && a.c(p)){
+
+p.unlockedAchs.push(a.id);
+
+p.money += a.r;
+
+showPopup("🏆 ДОСЯГНЕННЯ: " + a.n + "\n+" + a.r + "₴");
+
+updateUI();
+
+}
+
+});
+
+}
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
     function sellFish() { let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
