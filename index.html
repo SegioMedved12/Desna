@@ -180,13 +180,13 @@ border-top:2px solid rgba(255,255,255,0.2);
 <h3>🎣 РИБАЛЬСЬКИЙ МАГАЗИН</h3>
 
 <div class="tabs">
-<div class="tab active-tab" onclick="switchShop('baits')">Наживки</div>
-<div class="tab" onclick="switchShop('rods')">Вудки</div>
-<div class="tab" onclick="switchShop('reels')">Катушки</div>
-<div class="tab" onclick="switchShop('lines')">Ліски</div>
+<div class="tab active-tab" onclick="switchShop('baits', this)">Наживки</div>
+<div class="tab" onclick="switchShop('rods', this)">Вудки</div>
+<div class="tab" onclick="switchShop('reels', this)">Катушки</div>
+<div class="tab" onclick="switchShop('lines', this)">Ліски</div>
 </div>
 
-<div id="shop-items"></div>
+<div id="fishshop-items"></div>
 
 <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
 </div>
@@ -196,11 +196,11 @@ border-top:2px solid rgba(255,255,255,0.2);
 <h3>🍖 ПРОДУКТОВИЙ МАГАЗИН</h3>
 
 <div class="tabs">
-<div class="tab active-tab" onclick="switchShop('food')">Їжа</div>
-<div class="tab" onclick="switchShop('alcohol')">Алкоголь</div>
+<div class="tab active-tab" onclick="switchShop('food', this)">Їжа</div>
+<div class="tab" onclick="switchShop('alcohol', this)">Алкоголь</div>
 </div>
 
-<div id="shop-items"></div>
+<div id="foodshop-items"></div>
 
 <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
 
@@ -484,37 +484,66 @@ setInterval(() => {
         if(id === 'inv') renderInv();
     }
 
-    function switchShop(cat) {
-        let html = GEAR_DATA[cat].map((it, i) => {
-            let alreadyOwned = (cat !== 'baits' && cat !== 'food' && p.ownedGear[cat].includes(i));
-            return `<div class="item-row">
-                <div><b>${it.n}</b><br><small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small></div>
-                <button onclick="buy('${cat}', ${i})" ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
-                    ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
-                </button>
-            </div>`;
-        }).join('');
-        document.getElementById('shop-items').innerHTML = html;
+  function switchShop(cat, e) {
+
+    // підсвітка вкладки
+    if(e){
+        e.parentElement.querySelectorAll('.tab')
+            .forEach(t => t.classList.remove('active-tab'));
+        e.classList.add('active-tab');
     }
 
-    function buy(cat, i) {
-        let it = GEAR_DATA[cat][i];
-        if(p.money < it.p) return showPopup("Мало грошей!");
-        p.money -= it.p;
-        
-        if(cat === 'baits') { 
-            p.baits[it.n] = (p.baits[it.n] || 0) + 10;
-            showPopup(`Придбано 10 шт. наживки: ${it.n}`);
-        } else if(cat === 'food' || cat === 'alcohol') { 
-             p.food[item.n] = (p.food[item.n] || 0) + 1;
-            showPopup(`У рюкзак додано: ${it.n}`);
-        } else { 
-            p.ownedGear[cat].push(i);
-            showPopup(`Снасть ${it.n} додана в арсенал!`);
+    let html = GEAR_DATA[cat].map((it, i) => {
+
+        let alreadyOwned = false;
+
+        if(cat === 'rods' || cat === 'reels' || cat === 'lines'){
+            alreadyOwned = p.ownedGear[cat].includes(i);
         }
-        updateUI();
-        switchShop(cat);
+
+        return `<div class="item-row">
+            <div>
+                <b>${it.n}</b><br>
+                <small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small>
+            </div>
+            <button onclick="buy('${cat}', ${i})"
+                ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
+                ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
+            </button>
+        </div>`;
+    }).join('');
+
+    if(cat === 'food' || cat === 'alcohol'){
+        document.getElementById('foodshop-items').innerHTML = html;
+    } else {
+        document.getElementById('fishshop-items').innerHTML = html;
     }
+}
+
+    function buy(cat, i) {
+
+    let it = GEAR_DATA[cat][i];
+
+    if(p.money < it.p) return showPopup("Мало грошей!");
+
+    p.money -= it.p;
+
+    if(cat === 'baits'){
+        p.baits[it.n] = (p.baits[it.n] || 0) + 10;
+        showPopup(`Придбано 10 шт. наживки: ${it.n}`);
+    }
+    else if(cat === 'food' || cat === 'alcohol'){
+        p.food[it.n] = (p.food[it.n] || 0) + 1;
+        showPopup(`У рюкзак додано: ${it.n}`);
+    }
+    else{
+        p.ownedGear[cat].push(i);
+        showPopup(`Снасть ${it.n} додана в арсенал!`);
+    }
+
+    updateUI();
+    switchShop(cat);
+}
 
     function renderBackpack() {
         // Наживки
