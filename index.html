@@ -118,7 +118,7 @@ left:0;
 width:100%;
 height:45%;   /* висота води */
 background:rgba(0,80,150,0.15);
-border-top:2px solid rgba(255,255,255,0.2);
+border-top: none;
 }
     </style>
 </head>
@@ -381,7 +381,8 @@ const ACHS = [
         money: 500, xp: 0, rank: 1, days: 1, inv: [], hr: 12, min: 0, hng: 100,
         gear: { rod: 0, reel: 0, line: 0 },
         ownedGear: { rods: [0], reels: [0], lines: [0] },
-        baits: { "Черв'як": 50 },
+        baits: {},
+        selBait: null,
         food: {},
         selBait: "Черв'як",
         stats: { totalF: 0, maxW: 0 },
@@ -471,13 +472,16 @@ setInterval(() => {
         document.getElementById('h-fill').style.width = p.hng + "%";
         document.getElementById('cur-bait-name').innerText = p.selBait;
         document.getElementById('cur-bait-count').innerText = p.baits[p.selBait] || 0;
+        document.getElementById('cur-bait-name').innerText = p.selBait || "Немає";
+        document.getElementById('cur-bait-count').innerText = p.selBait ? (p.baits[p.selBait] || 0) : 0;
         localStorage.setItem('desna_backpack_v5', JSON.stringify(p));
     }
 
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id === 'shop') switchShop('baits');
+        if(id === 'fishshop') switchShop('baits');
+        if(id === 'foodshop') switchShop('food');
         if(id === 'backpack') renderBackpack();
         if(id === 'achs') renderAchs();
         if(id === 'locs') renderLocs();
@@ -677,8 +681,9 @@ setInterval(() => {
         p.inv.push({n: name, w: fishW});
         p.stats.totalF++;
         if(parseFloat(fishW) > p.stats.maxW) p.stats.maxW = parseFloat(fishW);
-        p.xp += Math.floor(fishW * 40);
-        p.rank = Math.floor(p.xp/1000)+1;
+       let difficulty = fishW / GEAR_DATA.rods[p.gear.rod].m;
+       let xpGain = Math.floor(fishW * 10 + difficulty * 50);
+       addXP(xpGain);
         showPopup(`🐟 Впіймано: ${name} (${fishW} кг)!`);
         resetGame();
     }
@@ -711,6 +716,21 @@ function playRandomMusic(){
     playRandomMusic();
     document.body.removeEventListener("click", startMusic);
 });
+    function getRequiredXP(rank){
+    return 500 + rank * rank * 200;
+}
+
+function addXP(amount){
+    p.xp += amount;
+
+    console.log(p.xp + " / " + getRequiredXP(p.rank)); // 👈 СЮДИ
+
+    while(p.xp >= getRequiredXP(p.rank)){
+        p.xp -= getRequiredXP(p.rank);
+        p.rank++;
+        showPopup("⬆️ Новий розряд: " + p.rank);
+    }
+}
 
     function spawnFish() {
     let hour = p.hr;
@@ -769,7 +789,16 @@ function showPopup(text){
 function closePopup(){
     document.getElementById("game-popup").style.display = "none";
 }
-    function resetGame() { state = 'idle'; document.getElementById('bobber').style.display = 'none'; document.getElementById('fight-ui').style.display = 'none'; document.getElementById('rod-visual').style.display = 'none'; document.getElementById('s-reel').pause(); progress = 0; tension = 0; }
+   function resetGame() {
+    state = 'idle';
+    pullActive = false; // 🔥 ОЦЕ ВАЖЛИВО
+    document.getElementById('bobber').style.display = 'none';
+    document.getElementById('fight-ui').style.display = 'none';
+    document.getElementById('rod-visual').style.display = 'none';
+    document.getElementById('s-reel').pause();
+    progress = 0;
+    tension = 0;
+}
   function renderAchs(){
 
 document.getElementById('ach-container').innerHTML =
