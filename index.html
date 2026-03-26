@@ -558,16 +558,17 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
             alreadyOwned = p.ownedGear[cat].includes(i);
         }
 
-        return `<div class="item-row">
-            <div>
-                <b>${it.n}</b><br>
-                <small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small>
-            </div>
-            <button onclick="buy('${cat}', ${i})"
-                ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
-                ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
-            </button>
-        </div>`;
+        return `
+<div class="item-row">
+    <div>
+        <b>${it.n}</b><br>
+        <small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small>
+    </div>
+    <button onclick="buy('${cat}', ${i})"
+        ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
+        ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
+    </button>
+</div>`;
     }).join('');
 
     if(cat === 'food' || cat === 'alcohol'){
@@ -583,7 +584,7 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
     if(p.money < it.p) return showPopup("Мало грошей!");
 
     p.money -= it.p;
-    document.getElementById('applepay').play();
+    document.getElementById('my-sound').play();
     if(cat === 'baits'){
     p.baits[it.n] = (p.baits[it.n] || 0) + 10;
 
@@ -613,7 +614,8 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
 
         let safeName = name.replace(/'/g, "\\'");
 
-        return `<div class="item-row">
+        return `
+        <div class="item-row">
             <span>${name} (${p.baits[name]} шт)</span>
             <button class="btn-small"
                 onclick="selectBait('${safeName}')"
@@ -951,7 +953,7 @@ updateUI();
 }
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
-    function sellFish() { document.getElementById('s-buy').play(); let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
+    function sellFish() { document.getElementById('my-sound').play(); let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У саду порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
