@@ -175,16 +175,7 @@ border-top: none;
         <small id="xp-text">0 / 0</small>
     </div>
 </div>
-<div id="login" class="screen active">
-    <h2 style="color:var(--gold)">🎣 РИБАЛКА</h2>
 
-    <input id="nickname" placeholder="Введи нік..."
-        style="padding:10px; width:80%; margin:10px; border-radius:5px; border:none;">
-
-    <button class="btn" onclick="createAccount()">▶️ УВІЙТИ</button>
-
-    <div id="account-list" style="margin-top:15px;"></div>
-</div> 
 <div id="menu" class="screen active">
     <h2 style="color:var(--gold); margin: 5px;">ДЕСНА</h2>
     <div style="margin-bottom: 10px; font-size: 0.85em; color: var(--neon); background: #000; padding: 5px; border: 1px solid #333;">
@@ -197,7 +188,6 @@ border-top: none;
     <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
-    <button class="btn" onclick="logout()">🚪 ВИЙТИ З АКАУНТУ</button>
 </div>
 
 <div id="backpack" class="screen">
@@ -417,59 +407,18 @@ const ACHS = [
         {n: "Сохатське", img: "sohatske.jpg", rank: 10},
         {n: "Журавльове", img: "Zhuravlove.jpg", rank: 16}
     ];
-let currentUser = null;
 
-function getAccounts(){
-    return JSON.parse(localStorage.getItem("desna_accounts") || "{}");
-}
-
-function saveAccounts(accs){
-    localStorage.setItem("desna_accounts", JSON.stringify(accs));
-}
-    function createAccount(){
-
-    let nick = document.getElementById("nickname").value.trim();
-
-    if(!nick) return alert("Введи нік!");
-
-    let accs = getAccounts();
-
-    if(!accs[nick]){
-        accs[nick] = null; // новий акаунт
-        saveAccounts(accs);
-    }
-
-    currentUser = nick;
-
-    loadGame();
-
-    showScreen('menu');
-}
     // Ініціалізація
-    let p;
-
-function loadGame(){
-
-    let accs = getAccounts();
-
-    p = accs[currentUser];
-
-    if(!p){
-        p = {
-            money: 500, xp: 0, rank: 1, days: 1,
-            inv: [], hr: 12, min: 0, hng: 100,
-            gear: { rod: 0, reel: 0, line: 0 },
-            ownedGear: { rods: [0], reels: [0], lines: [0] },
-            baits: {},
-            selBait: null,
-            food: {},
-            stats: { totalF: 0, maxW: 0 },
-            unlockedAchs: []
-        };
-    }
-
-    updateUI();
-}
+    let p = JSON.parse(localStorage.getItem('desna_backpack_v5')) || {
+        money: 500, xp: 0, rank: 1, days: 1, inv: [], hr: 12, min: 0, hng: 100,
+        gear: { rod: 0, reel: 0, line: 0 },
+        ownedGear: { rods: [0], reels: [0], lines: [0] },
+        baits: {},
+        selBait: null,
+        food: {},
+        stats: { totalF: 0, maxW: 0 },
+        unlockedAchs: []
+    };
 
     // Фікс для старих збережень
     if(!p.food) p.food = {};
@@ -573,9 +522,7 @@ setInterval(() => {
         document.getElementById('h-fill').style.width = p.hng + "%";
         document.getElementById('cur-bait-name').innerText = p.selBait || "Немає";
         document.getElementById('cur-bait-count').innerText = p.selBait ? (p.baits[p.selBait] || 0) : 0;
-        let accs = getAccounts();
-        accs[currentUser] = p;
-        saveAccounts(accs);
+        localStorage.setItem('desna_backpack_v5', JSON.stringify(p));
         let req = getRequiredXP(p.rank);
         let percent = (p.xp / req) * 100;
 
@@ -985,33 +932,6 @@ ${a.d}<br>
 ).join('');
 
 }
-    function renderAccounts(){
-
-    let accs = getAccounts();
-
-    let html = Object.keys(accs).map(nick => `
-        <div class="item-row">
-            <span>${nick}</span>
-            <button class="btn-small" onclick="selectAccount('${nick}')">
-                УВІЙТИ
-            </button>
-        </div>
-    `).join('');
-
-    document.getElementById("account-list").innerHTML = html || "Немає акаунтів";
-}
-
-function selectAccount(nick){
-    currentUser = nick;
-    loadGame();
-    showScreen('menu');
-}
-    function logout(){
-    currentUser = null;
-    p = null;
-    showScreen('login');
-    renderAccounts();
-}
     function checkAchs(){
 
 ACHS.forEach(a=>{
@@ -1038,19 +958,6 @@ updateUI();
     function exitGame() { resetGame(); showScreen('menu'); }
 
     updateUI();
-
-    setInterval(() => {
-
-    if(!currentUser || !p) return;
-
-    let accs = getAccounts();
-    accs[currentUser] = p;
-    saveAccounts(accs);
-
-}, 3000); // кожні 3 сек
-
-    
-    renderAccounts();
 </script>
 </body>
 </html>
