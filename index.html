@@ -145,10 +145,10 @@ border-top: none;
 </head>
 <body>
 
-<audio id="s-cast" src="https://actions.google.com/sounds/v1/water/splash.ogg"></audio>
-<audio id="s-bite" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
-<audio id="s-reel" src="https://actions.google.com/sounds/v1/foley/fishing_reel_fast.ogg"></audio>
-
+<audio id="s-cast" src="poplavok.mp3"></audio>
+<audio id="s-bite" src="kliov.mp3"></audio>
+<audio id="s-reel" src="tiagne.mp3"></audio>
+<audio id="my-sound" src="applepay.mp3" preload="auto"></audio>
 <audio id="bg-music"></audio>
 
  
@@ -578,13 +578,12 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
 }
 
     function buy(cat, i) {
-
     let it = GEAR_DATA[cat][i];
 
     if(p.money < it.p) return showPopup("Мало грошей!");
 
     p.money -= it.p;
-
+    document.getElementById('applepay').play();
     if(cat === 'baits'){
     p.baits[it.n] = (p.baits[it.n] || 0) + 10;
 
@@ -608,60 +607,77 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
 }
 
     function renderBackpack() {
-        // Наживки
-       let baitHtml = Object.keys(p.baits).map(name => {
-            return `<div class="item-row">
-    <span>${name} (${p.baits[name]} шт)</span>
-    <button class="btn-small" onclick="selectBait('${name}')" 
-        ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
-        ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-    </button>
-</div>`;
-        }).join('') || 'Наживки немає';
-        document.getElementById('inv-baits').innerHTML = baitHtml;
 
-        // Їжа
-        let foodHtml = Object.keys(p.food).map(name => {
-            if(p.food[name] <= 0) return '';
-            return `<div class="item-row">
-                <span>${name} (${p.food[name]} шт)</span>
-                <button class="btn-small" onclick="useFood('${name}')">З'ЇСТИ</button>
-            </div>`;
-        }).join('') || 'Їжі немає';
-        document.getElementById('inv-food').innerHTML = foodHtml;
+    // Наживки
+    let baitHtml = Object.keys(p.baits).map(name => {
 
-        // Снасті
-       let gearHtml = ['rods', 'reels', 'lines'].map(type => {
-    return p.ownedGear[type].map(idx => {
-
-        let it = GEAR_DATA[type][idx];
-        let isEquipped = p.gear[type.slice(0,-1)] === idx;
+        let safeName = name.replace(/'/g, "\\'");
 
         return `<div class="item-row">
-            <span>${it.n} (${it.m}кг)</span>
-
-            <div>
-
+            <span>${name} (${p.baits[name]} шт)</span>
             <button class="btn-small"
-                onclick="equipGear('${type}', ${idx})"
-                ${isEquipped ? 'disabled' : ''}>
-                ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
+                onclick="selectBait('${safeName}')"
+                ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
+                ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРРАТИ'}
             </button>
-
-            <button class="btn-small"
-                onclick="sellGear('${type}', ${idx})"
-                ${isEquipped ? 'disabled' : ''}>
-                ПРОДАТИ
-            </button>
-
-            </div>
-
         </div>`;
 
+    }).join('') || 'Наживки немає';
+
+    document.getElementById('inv-baits').innerHTML = baitHtml;
+
+
+    // Їжа
+    let foodHtml = Object.keys(p.food).map(name => {
+
+        if(p.food[name] <= 0) return '';
+
+        return `<div class="item-row">
+            <span>${name} (${p.food[name]} шт)</span>
+            <button class="btn-small"
+                onclick="useFood('${name}')">
+                З'ЇСТИ
+            </button>
+        </div>`;
+
+    }).join('') || 'Їжі немає';
+
+    document.getElementById('inv-food').innerHTML = foodHtml;
+
+
+    // Снасті
+    let gearHtml = ['rods','reels','lines'].map(type => {
+
+        return p.ownedGear[type].map(idx => {
+
+            let it = GEAR_DATA[type][idx];
+            let isEquipped = p.gear[type.slice(0,-1)] === idx;
+
+            return `<div class="item-row">
+                <span>${it.n} (${it.m}кг)</span>
+                <div>
+
+                <button class="btn-small"
+                    onclick="equipGear('${type}', ${idx})"
+                    ${isEquipped ? 'disabled' : ''}>
+                    ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
+                </button>
+
+                <button class="btn-small"
+                    onclick="sellGear('${type}', ${idx})"
+                    ${isEquipped ? 'disabled' : ''}>
+                    ПРОДАТИ
+                </button>
+
+                </div>
+            </div>`;
+
+        }).join('');
+
     }).join('');
-}).join('');
-        document.getElementById('inv-gear').innerHTML = gearHtml;
-    }
+
+    document.getElementById('inv-gear').innerHTML = gearHtml;
+}
 function sellGear(type, idx){
 
     let it = GEAR_DATA[type][idx];
@@ -783,19 +799,34 @@ function selectBait(name){
     document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
 }
 
-    function catchFish() {
-        let bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
-        let name = bData.target[Math.floor(Math.random()*bData.target.length)];
-        p.inv.push({n: name, w: fishW});
-        p.stats.totalF++;
-        if(parseFloat(fishW) > p.stats.maxW) p.stats.maxW = parseFloat(fishW);
-       let difficulty = fishW / GEAR_DATA.rods[p.gear.rod].m;
-       let xpGain = Math.floor(fishW * 10 + difficulty * 50);
-       addXP(xpGain);
-        showPopup(`🐟 Впіймано: ${name} (${fishW} кг)!`);
-        resetGame();
-    }
+    // Покращена функція вибору риби (враховує час доби та наживку)
+function catchFish() {
+    const bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
+    const hour = p.hr;
+    const isNight = (hour >= 21 || hour < 5);
+    
+    // Фільтруємо риб, які люблять цю наживку
+    let possibleFish = GEAR_DATA.fish.filter(f => bData.target.includes(f.n));
+    
+    // Якщо ніч, додаємо шанс на Сома, якщо день - на Плітку тощо (можна розширити)
+    let fishData = possibleFish[Math.floor(Math.random() * possibleFish.length)];
 
+    // Вага залежить від наживки та можливостей риби
+    let weight = +(Math.random() * (fishData.max - fishData.min) + fishData.min).toFixed(2);
+    
+    // Обмежуємо максимальну вагу можливостями наживки (щоб на хліб не клюнув сом 40кг)
+    if (weight > bData.size[1]) weight = bData.size[1];
+
+    p.inv.push({n: fishData.n, w: weight});
+    p.stats.totalF++;
+    if(weight > p.stats.maxW) p.stats.maxW = weight;
+
+    let xpGain = Math.floor(weight * 15 + p.rank * 10);
+    addXP(xpGain);
+
+    showPopup(`🐟 Впіймано: ${fishData.n} (${weight} кг)!\n+${xpGain} XP`);
+    resetGame();
+}
    let lastTrack = null;
 
 function playRandomMusic(){
@@ -838,28 +869,6 @@ function addXP(amount){
         p.rank++;
         showPopup("⬆️ Новий розряд: " + p.rank);
     }
-}
-
-    function spawnFish() {
-    let hour = p.hr;
-    let timeTag = (hour >=6 && hour <18) ? "day" : (hour >=18 && hour <22) ? "evening" : "night";
-
-    // фільтруємо рибу за вибраною наживкою та часом доби
-    let possible = FISHES.filter(f => f.bait.includes(p.selBait) && f.time.includes(timeTag));
-
-    if(possible.length === 0) return null;
-
-    // вибір риби по рідкості
-    let total = possible.reduce((sum,f)=>sum+f.rarity,0);
-    let r = Math.random()*total;
-    let acc = 0;
-    for(let f of possible){
-        acc += f.rarity;
-        if(r <= acc){
-            return {...f, weight: +(Math.random()*(f.maxW-f.minW)+f.minW).toFixed(2)};
-        }
-    }
-    return possible[0];
 }
     function updateDayNight(){
 
@@ -942,7 +951,7 @@ updateUI();
 }
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
-    function sellFish() { let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
+    function sellFish() { document.getElementById('s-buy').play(); let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У саду порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
