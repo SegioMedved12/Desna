@@ -16,9 +16,24 @@ body {
     touch-action: none;
 }
         
-        .stats { background: var(--wood); padding: 5px 10px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; border-bottom: 2px solid var(--gold); font-size: 0.75em; text-align: center; }
+       .stats {
+    background: var(--wood);
+    padding: 5px 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px;
+    border-bottom: 2px solid var(--gold);
+    font-size: 0.75em;
+    text-align: center;
+}
         .val { color: var(--gold); font-weight: bold; }
-        .bar-container { grid-column: span 3; display: flex; gap: 10px; align-items: center; margin-top: 5px; }
+        .bar-container {
+    grid-column: span 3; /* щоб полоски були на всю ширину */
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 5px;
+}
         .bar-bg { flex-grow: 1; background: #111; height: 10px; border-radius: 5px; border: 1px solid #555; overflow: hidden; }
         #h-fill { height: 100%; background: #4caf50; width: 100%; transition: 0.3s; }
 
@@ -120,6 +135,12 @@ height:45%;   /* висота води */
 background:rgba(0,80,150,0.15);
 border-top: none;
 }
+    #xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    width: 0%;
+    transition: 0.3s;
+}
     </style>
 </head>
 <body>
@@ -136,9 +157,22 @@ border-top: none;
     <div>💰 <span id="money">500</span></div>
     <div>⭐ Р-д: <span id="rank">1</span></div>
     <div>⏰ <span id="time">12:00</span></div>
+
+    <!-- ГОЛОД -->
     <div class="bar-container">
         <small>🍽️</small>
-        <div class="bar-bg"><div id="h-fill"></div></div>
+        <div class="bar-bg">
+            <div id="h-fill"></div>
+        </div>
+    </div>
+
+    <!-- XP -->
+    <div class="bar-container">
+        <small>⭐ XP</small>
+        <div class="bar-bg">
+            <div id="xp-fill"></div>
+        </div>
+        <small id="xp-text">0 / 0</small>
     </div>
 </div>
 
@@ -380,7 +414,7 @@ const ACHS = [
         gear: { rod: 0, reel: 0, line: 0 },
         ownedGear: { rods: [0], reels: [0], lines: [0] },
         baits: {},
-        selBait: "Черв'як",
+        selBait: null,
         food: {},
         stats: { totalF: 0, maxW: 0 },
         unlockedAchs: []
@@ -489,6 +523,11 @@ setInterval(() => {
         document.getElementById('cur-bait-name').innerText = p.selBait || "Немає";
         document.getElementById('cur-bait-count').innerText = p.selBait ? (p.baits[p.selBait] || 0) : 0;
         localStorage.setItem('desna_backpack_v5', JSON.stringify(p));
+        let req = getRequiredXP(p.rank);
+        let percent = (p.xp / req) * 100;
+
+document.getElementById('xp-fill').style.width = percent + "%";
+document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
     }
 
     function showScreen(id) {
@@ -547,9 +586,14 @@ setInterval(() => {
     p.money -= it.p;
 
     if(cat === 'baits'){
-        p.baits[it.n] = (p.baits[it.n] || 0) + 10;
-        showPopup(`Придбано 10 шт. наживки: ${it.n}`);
+    p.baits[it.n] = (p.baits[it.n] || 0) + 10;
+
+    if(!p.selBait){
+        p.selBait = it.n;
     }
+
+    showPopup(`Придбано 10 шт. наживки: ${it.n}`);
+}
     else if(cat === 'food' || cat === 'alcohol'){
         p.food[it.n] = (p.food[it.n] || 0) + 1;
         showPopup(`У рюкзак додано: ${it.n}`);
@@ -633,8 +677,6 @@ function sellGear(type, idx){
     renderBackpack();
     updateUI();
 }
-    function selectBait(name) { p.selBait = name; renderBackpack(); updateUI(); }
-    
     function useFood(name) {
 
     let it =
@@ -659,7 +701,16 @@ function sellGear(type, idx){
         updateUI();
     }
 }
+function selectBait(name){
+    if(!p.baits[name] || p.baits[name] <= 0){
+        showPopup("Немає цієї наживки!");
+        return;
+    }
 
+    p.selBait = name;
+    renderBackpack();
+    updateUI();
+}
     function equipGear(type, idx) {
         p.gear[type.slice(0,-1)] = idx;
         renderBackpack();
@@ -676,7 +727,7 @@ function sellGear(type, idx){
     let waterStart = rect.height * 0.55; // де починається вода
 
     if(y < waterStart){
-        showPopup("🎣 Тут немає води!");
+        showPopup("🎣 Далеко не закину!");
         return;
     }
 
