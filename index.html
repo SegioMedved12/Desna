@@ -664,21 +664,21 @@ function renderQuests(){
     let html = p.daily.quests.map((q,i)=>{
 
         return `
-        <div class="item-row">
-            <div>
-                <b>${q.n}</b><br>
-                <small>${q.progress}/${q.target}</small>
-            </div>
+<div class="item-row">
+    <div>
+        <b>${q.n}</b><br>
+        <small>${q.progress}/${q.target}</small>
+    </div>
 
-            ${
-                q.done && !q.claimed
-                ? `<button onclick="claimQuest(${i})">ЗАБРАТИ</button>`
-                : q.claimed
-                ? `<button disabled>✔</button>`
-                : `<button disabled>...</button>`
-            }
-        </div>
-        `;
+    ${
+        q.done && !q.claimed
+        ? `<button onclick="claimQuest(${i})">ЗАБРАТИ</button>`
+        : q.claimed
+        ? `<button disabled>✔</button>`
+        : `<button disabled>...</button>`
+    }
+</div>
+`;
 
     }).join('');
 
@@ -781,14 +781,14 @@ function goBack(){
         let safeName = name.replace(/'/g, "\\'");
 
         return `
-        <div class="item-row">
-            <span>${name} (${p.baits[name]} шт)</span>
-            <button class="btn-small"
-                onclick="selectBait('${safeName}')"
-                ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
-                ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-            </button>
-        </div>`;
+<div class="item-row">
+    <span>${name} (${p.baits[name]} шт)</span>
+    <button class="btn-small"
+        onclick="selectBait('${safeName}')"
+        ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
+        ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
+    </button>
+</div>`;
 
     }).join('') || 'Наживки немає';
 
@@ -1200,7 +1200,8 @@ updateUI();
     }
 
     if(q.type === "earn"){
-        q.progress = p.dailyEarned;
+        q.progress = Math.floor(p.dailyEarned);
+
     }
 
     if(q.progress >= q.target){
@@ -1212,7 +1213,7 @@ updateUI();
 
     document.getElementById('my-sound').play();
 
-    let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0);
+    let sum = Math.floor(p.inv.reduce((a, f) => a + (f.w * 130), 0));
 
     p.money += sum;
     p.inv = [];
@@ -1226,7 +1227,7 @@ updateUI();
         }
 
         if(q.type === "earn"){
-            q.progress = p.dailyEarned;
+            q.progress = Math.floor(p.dailyEarned);
         }
 
         if(q.progress >= q.target){
