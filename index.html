@@ -188,6 +188,7 @@ border-top: none;
     <button class="btn" onclick="document.getElementById('s-door').play(); showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
     <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
+    <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
     <div style="margin-top:15px;">
     <img src="Герб риботина.png" style="
@@ -315,6 +316,11 @@ border-top: none;
     <div id="popup-text"></div>
     <button onclick="closePopup()">OK</button>
 </div>
+    <div id="quests" class="screen">
+    <h3>📋 ЩОДЕННІ ЗАВДАННЯ</h3>
+    <div id="quest-list"></div>
+    <button class="btn" onclick="goBack()">⬅️ НАЗАД</button>
+</div>
 <script>
 
      const MUSIC = [
@@ -405,26 +411,64 @@ border-top: none;
 };
 const ACHS = [
 
-{ id:1,  n:"Перші кроки", d:"Підняти 2 розряд", c:(p)=>p.rank>=2, r:100 },
-{ id:2,  n:"Завзятий", d:"Прожити 7 ігрових днів", c:(p)=>p.days>=7, r:150 },
-{ id:3,  n:"Важка вага", d:"Впіймати рибу >5кг", c:(p)=>p.stats.maxW>=5, r:200 },
-{ id:4,  n:"Майстер", d:"Впіймати 50 риб", c:(p)=>p.stats.totalF>=50, r:250 },
+{ id:1,  n:"Перші кроки", d:"Підняти 2 розряд", c:(p)=>p.rank>=2, r:100, xp:100 },
+{ id:2,  n:"Завзятий", d:"Прожити 7 ігрових днів", c:(p)=>p.days>=7, r:150, xp:150 },
+{ id:3,  n:"Важка вага", d:"Впіймати рибу >5кг", c:(p)=>p.stats.maxW>=5, r:200, xp:200 },
+{ id:4,  n:"Майстер", d:"Впіймати 50 риб", c:(p)=>p.stats.totalF>=50, r:250, xp:250 },
 
-{ id:5,  n:"Профі", d:"Підняти 5 розряд", c:(p)=>p.rank>=5, r:400 },
-{ id:6,  n:"Рибалка", d:"Впіймати 10 риб", c:(p)=>p.stats.totalF>=10, r:120 },
-{ id:7,  n:"Досвідчений", d:"Впіймати 25 риб", c:(p)=>p.stats.totalF>=25, r:180 },
-{ id:8,  n:"Колекціонер", d:"Впіймати 100 риб", c:(p)=>p.stats.totalF>=100, r:600 },
+{ id:5,  n:"Профі", d:"Підняти 5 розряд", c:(p)=>p.rank>=5, r:400, xp:300 },
+{ id:6,  n:"Рибалка", d:"Впіймати 10 риб", c:(p)=>p.stats.totalF>=10, r:120, xp:100 },
+{ id:7,  n:"Досвідчений", d:"Впіймати 25 риб", c:(p)=>p.stats.totalF>=25, r:180, xp:150 },
+{ id:8,  n:"Колекціонер", d:"Впіймати 100 риб", c:(p)=>p.stats.totalF>=100, r:600, xp:400 },
 
-{ id:9,  n:"Гігант", d:"Впіймати рибу >10кг", c:(p)=>p.stats.maxW>=10, r:500 },
-{ id:10, n:"Трофей", d:"Впіймати рибу >20кг", c:(p)=>p.stats.maxW>=20, r:1200 },
+{ id:9,  n:"Гігант", d:"Впіймати рибу >10кг", c:(p)=>p.stats.maxW>=10, r:500, xp:350 },
+{ id:10, n:"Трофей", d:"Впіймати рибу >20кг", c:(p)=>p.stats.maxW>=20, r:1200, xp:800 },
 
-{ id:11, n:"Старий рибак", d:"Прожити 30 днів", c:(p)=>p.days>=30, r:700 },
-{ id:12, n:"Легенда Десни", d:"Підняти 30 розряд", c:(p)=>p.rank>=30, r:1500 },
+{ id:11, n:"Старий рибак", d:"Прожити 30 днів", c:(p)=>p.days>=30, r:700, xp:500 },
+{ id:12, n:"Легенда Десни", d:"Підняти 30 розряд", c:(p)=>p.rank>=30, r:1500, xp:1500 },
 
-{ id:13, n:"Багатій", d:"Мати 5000₴", c:(p)=>p.money>=5000, r:1000 },
-{ id:14, n:"Мільйонер", d:"Мати 20000₴", c:(p)=>p.money>=20000, r:3000 },
+{ id:13, n:"Багатій", d:"Мати 5000₴", c:(p)=>p.money>=5000, r:1000, xp:600 },
+{ id:14, n:"Мільйонер", d:"Мати 20000₴", c:(p)=>p.money>=20000, r:3000, xp:1200 },
 
-{ id:15, n:"Абсолютний майстер", d:"Піймати рибу >60кг", c:(p)=>p.stats.maxW>=60, r:5000 }
+{ id:15, n:"Абсолютний майстер", d:"Піймати рибу >60кг", c:(p)=>p.stats.maxW>=60, r:5000, xp:3000 }
+
+];
+    const DAILY_POOL = [
+
+{
+    n:"Спіймати 5 риб",
+    target:5,
+    type:"fish",
+    reward:{money:200, xp:150}
+},
+
+{
+    n:"Спіймати рибу >2кг",
+    target:1,
+    type:"big",
+    reward:{money:300, xp:200}
+},
+
+{
+    n:"Продати улов",
+    target:1,
+    type:"sell",
+    reward:{money:250, xp:150}
+},
+
+{
+    n:"Заробити 500₴",
+    target:500,
+    type:"earn",
+    reward:{money:400, xp:250}
+},
+
+{
+    n:"З'їсти 2 їжі",
+    target:2,
+    type:"eat",
+    reward:{money:150, xp:120}
+}
 
 ];
 
@@ -447,13 +491,23 @@ const ACHS = [
         selBait: null,
         food: {},
         stats: { totalF: 0, maxW: 0 },
-        unlockedAchs: []
+        unlockedAchs: [],
+        dailyEarned: 0,
+        daily: {
+        lastDay: 1,
+        quests: []
+},
     };
 
     // Фікс для старих збережень
     if(!p.food) p.food = {};
     if(!p.ownedGear) p.ownedGear = { rods: [0], reels: [0], lines: [0] };
-
+    if(!p.daily){
+    p.daily = { lastDay: p.days, quests: [] };
+}
+    if(p.daily.quests.length === 0){
+    generateDailyQuests();
+     }
     let state = 'idle', pullActive = false, tension = 0, progress = 0, fishW = 0;
 
 const TIME_SPEED = 2; // швидкість часу (можеш міняти)
@@ -470,6 +524,11 @@ setInterval(() => {
     if(p.hr >= 24){
         p.hr = 0;
         p.days++;
+     p.dailyEarned = 0;
+        // 👇 ОЦЕ ДОДАЄМО ТУТ
+        if(p.daily.lastDay !== p.days){
+            generateDailyQuests();
+        }
     }
 
     // голод теж тут логічно
@@ -581,8 +640,33 @@ function showScreen(id){
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
     if(id === 'inv') renderInv();
+    if(id === 'quests') renderQuests();
 }
+function renderQuests(){
 
+    let html = p.daily.quests.map((q,i)=>{
+
+        return `
+        <div class="item-row">
+            <div>
+                <b>${q.n}</b><br>
+                <small>${q.progress}/${q.target}</small>
+            </div>
+
+            ${
+                q.done && !q.claimed
+                ? `<button onclick="claimQuest(${i})">ЗАБРАТИ</button>`
+                : q.claimed
+                ? `<button disabled>✔</button>`
+                : `<button disabled>...</button>`
+            }
+        </div>
+        `;
+
+    }).join('');
+
+    document.getElementById("quest-list").innerHTML = html || "Немає завдань";
+}
   function switchShop(cat, e) {
 
     // підсвітка вкладки
@@ -619,7 +703,28 @@ function showScreen(id){
         document.getElementById('fishshop-items').innerHTML = html;
     }
 }
+function generateDailyQuests(){
 
+    let pool = [...DAILY_POOL];
+
+    p.daily.quests = [];
+
+    for(let i=0;i<3;i++){
+
+        let r = Math.floor(Math.random()*pool.length);
+
+        let q = JSON.parse(JSON.stringify(pool[r]));
+        q.progress = 0;
+        q.done = false;
+        q.claimed = false;
+
+        p.daily.quests.push(q);
+
+        pool.splice(r,1);
+    }
+
+    p.daily.lastDay = p.days;
+}
     function buy(cat, i) {
     let it = GEAR_DATA[cat][i];
 
@@ -739,6 +844,26 @@ function sellGear(type, idx){
     renderBackpack();
     updateUI();
 }
+    function claimQuest(i){
+
+    let q = p.daily.quests[i];
+
+    if(!q.done || q.claimed) return;
+
+    q.claimed = true;
+
+    p.money += q.reward.money;
+    addXP(q.reward.xp);
+
+    showPopup(
+        "🎁 Завдання виконано!\n+" +
+        q.reward.money + "₴\n+" +
+        q.reward.xp + " XP"
+    );
+
+    updateUI();
+    renderQuests();
+}
     function useFood(name) {
 
     let it =
@@ -761,6 +886,17 @@ function sellGear(type, idx){
 
         renderBackpack();
         updateUI();
+        p.daily.quests.forEach(q=>{
+
+    if(q.type === "eat"){
+        q.progress++;
+    }
+
+    if(q.progress >= q.target){
+        q.done = true;
+    }
+
+});
     }
 }
 function selectBait(name){
@@ -872,6 +1008,21 @@ function catchFish() {
 
     showPopup(`🐟 Впіймано: ${fishData.n} (${weight} кг)!\n+${xpGain} XP`);
     resetGame();
+    p.daily.quests.forEach(q=>{
+
+    if(q.type === "fish"){
+        q.progress++;
+    }
+
+    if(q.type === "big" && weight >= 2){
+        q.progress++;
+    }
+
+    if(q.progress >= q.target){
+        q.done = true;
+    }
+
+});
 }
    let lastTrack = null;
 
@@ -986,7 +1137,15 @@ p.unlockedAchs.push(a.id);
 
 p.money += a.r;
 
-showPopup("🏆 ДОСЯГНЕННЯ: " + a.n + "\n+" + a.r + "₴");
+if(a.xp){
+    addXP(a.xp);
+}
+
+showPopup(
+"🏆 ДОСЯГНЕННЯ: " + a.n +
+"\n+" + a.r + "₴" +
+(a.xp ? "\n+" + a.xp + " XP" : "")
+);
 
 updateUI();
 
@@ -996,8 +1155,52 @@ updateUI();
 
 }
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
-    function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
-    function sellFish() { document.getElementById('my-sound').play(); let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
+    function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); p.daily.quests.forEach(q=>{
+
+    if(q.type === "sell"){
+        q.progress = 1;
+
+    }
+
+    if(q.type === "earn"){
+        q.progress = p.dailyEarned;
+    }
+
+    if(q.progress >= q.target){
+        q.done = true;
+    }
+
+}); }
+    function sellFish() {
+
+    document.getElementById('my-sound').play();
+
+    let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0);
+
+    p.money += sum;
+    p.inv = [];
+        
+    p.dailyEarned += sum;
+    // квести
+    p.daily.quests.forEach(q => {
+
+        if(q.type === "sell"){
+            q.progress = 1;
+        }
+
+        if(q.type === "earn"){
+            q.progress = p.dailyEarned;
+        }
+
+        if(q.progress >= q.target){
+            q.done = true;
+        }
+
+    });
+
+    updateUI();
+    showPopup("💰 Улов продано за " + Math.floor(sum) + "₴");
+}
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У садку порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
