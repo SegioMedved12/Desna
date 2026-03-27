@@ -75,7 +75,20 @@ body {
         .btn:disabled { background: #222; color: #666; border-color: #444; }
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
-        #rod-visual { position: absolute; bottom: -20px; right: 20%; width: 10px; height: 150px; background: linear-gradient(to top, #3e2723, #5d4037); transform-origin: bottom center; transform: rotate(15deg); transition: transform 0.1s; z-index: 10; border-radius: 5px; display: none; }
+       #rod-visual{
+    position:absolute;
+    bottom:-60px;
+    right:18%;
+    width:220px;
+    height:320px;
+    background: url('rod.png') no-repeat center/contain;
+    transform-origin: bottom center;
+    transform: rotate(15deg);
+    transition: transform 0.05s linear;
+    z-index: 10;
+    display: none;
+    pointer-events: none;
+}
         #bobber { position: absolute; display: none; z-index: 5; }
         .ant { width: 3px; height: 15px; background: red; margin: 0 auto; }
         .bod { width: 8px; height: 12px; background: white; border-radius: 50%; border: 1px solid black; }
@@ -102,7 +115,7 @@ height:100%;
 pointer-events:none;
 transition: background 1s linear;
 }
-        #game-popup{
+#game-popup{
 position:fixed;
 top:50%;
 left:50%;
@@ -115,6 +128,13 @@ display:none;
 text-align:center;
 border-radius:10px;
 box-shadow:0 0 20px black;
+}
+#line{
+    position:absolute;
+    width:2px;
+    background:linear-gradient(to bottom, #fff, #aaa);
+    transform-origin: top;
+    z-index:4;
 }
 
 #game-popup button{
@@ -266,7 +286,7 @@ border-top: none;
     <div id="game-view" onclick="cast(event)">
         <div id="day-overlay"></div>
         <div id="water"></div>
-
+        <div id="line"></div>
         <div id="rod-visual"></div>
         <div id="bobber">
             <div class="ant"></div>
@@ -936,11 +956,12 @@ function selectBait(name){
     p.baits[p.selBait]--;
 
     document.getElementById('s-cast').play();
-
+    
     document.getElementById('bobber').style.left = (e.clientX - rect.left) + "px";
     document.getElementById('bobber').style.top = (e.clientY - rect.top) + "px";
     document.getElementById('bobber').style.display = 'block';
     document.getElementById('rod-visual').style.display = 'block';
+    document.getElementById('line').style.display = 'block';
 
     setTimeout(() => {
 
@@ -974,7 +995,13 @@ function selectBait(name){
         document.getElementById('t-fill').style.background = "red";
     }
 
-    let angle = 15 - tension/4;
+    let angle = 15 - tension/3;
+
+if(tension > 70){
+    document.getElementById('rod-visual').style.filter = "brightness(1.3)";
+} else {
+    document.getElementById('rod-visual').style.filter = "brightness(1)";
+}
     document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
 }
 
@@ -1052,7 +1079,27 @@ function playRandomMusic(){
     function getRequiredXP(rank){
     return 500 + rank * rank * 200;
 }
+function updateLine(){
+    let rod = document.getElementById('rod-visual').getBoundingClientRect();
+    let bob = document.getElementById('bobber').getBoundingClientRect();
+    let game = document.getElementById('game-view').getBoundingClientRect();
 
+    let x1 = rod.left + rod.width * 0.55 - game.left;
+    let y1 = rod.top + 40 - game.top;
+
+    let x2 = bob.left + bob.width/2 - game.left;
+    let y2 = bob.top - game.top;
+
+    let dx = x2 - x1;
+    let dy = y2 - y1;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+
+    let line = document.getElementById('line');
+    line.style.left = x1 + "px";
+    line.style.top = y1 + "px";
+    line.style.height = dist + "px";
+    line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+}
 function addXP(amount){
     p.xp += amount;
 
@@ -1104,8 +1151,10 @@ function closePopup(){
     state = 'idle';
     pullActive = false; // 🔥 ОЦЕ ВАЖЛИВО
     document.getElementById('bobber').style.display = 'none';
+    document.getElementById('line').style.height = "0px";
     document.getElementById('fight-ui').style.display = 'none';
     document.getElementById('rod-visual').style.display = 'none';
+    document.getElementById('line').style.display = 'none';
     document.getElementById('s-reel').pause();
     progress = 0;
     tension = 0;
@@ -1211,6 +1260,11 @@ updateUI();
     function exitGame() { resetGame(); showScreen('menu'); }
 
     updateUI();
+    setInterval(() => {
+    if(state !== 'idle'){
+        updateLine();
+    }
+}, 30);
 </script>
 </body>
 </html>
