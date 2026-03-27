@@ -75,13 +75,15 @@ body {
         .btn:disabled { background: #222; color: #666; border-color: #444; }
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
-       #rod-visual{
+     
+        #rod-visual{
     position:absolute;
     bottom:0;
     left:0;
     width:140px;
     height:12px;
-    transform-origin: 20px 100%;
+    background: linear-gradient(to right, #8b5a2b, #c69c6d);
+    border-radius: 6px;
 }
         #bobber { position: absolute; display: none; z-index: 5; }
         .ant { width: 3px; height: 15px; background: red; margin: 0 auto; }
@@ -1083,32 +1085,17 @@ function updateLine(){
     let bob = bobEl.getBoundingClientRect();
     let game = gameEl.getBoundingClientRect();
 
-    // довжина вудки
-    let rodLength = 140;
+    // 👉 КІНЕЦЬ ВУДКИ (правий верхній край)
+    let x1 = rod.right - game.left;
+    let y1 = rod.top - game.top;
 
-    // кут вудки (той що в CSS)
-    let angleDeg = -20;
-
-    // якщо під час тягнення змінюєш кут — врахуй:
-    if(state === 'fight') angleDeg = -10;
-    if(state === 'reel') angleDeg = -30;
-
-    let angle = angleDeg * Math.PI / 180;
-
-    // точка основи вудки
-    let baseX = rod.left - game.left + 20;
-    let baseY = rod.bottom - game.top - 20;
-
-    // точка кінчика вудки
-    let x1 = baseX + Math.cos(angle) * rodLength;
-    let y1 = baseY + Math.sin(angle) * rodLength;
-
-    // поплавок
-    let x2 = bob.left + bob.width/2 - game.left;
-    let y2 = bob.top + bob.height/2 - game.top;
+    // 👉 ПОПЛАВОК (центр)
+    let x2 = bob.left + bob.width / 2 - game.left;
+    let y2 = bob.top + bob.height / 2 - game.top;
 
     let dx = x2 - x1;
     let dy = y2 - y1;
+
     let dist = Math.sqrt(dx*dx + dy*dy);
 
     let line = document.getElementById('line');
