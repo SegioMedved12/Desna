@@ -150,7 +150,8 @@ border-top: none;
 <audio id="s-reel" src="tiagne.mp3"></audio>
 <audio id="my-sound" src="applepay.mp3" preload="auto"></audio>
 <audio id="bg-music"></audio>
-
+<audio id="s-backpack" src="riukzak.mp3"></audio>
+<audio id="s-door" src="door.mp3"></audio>
  
 
 <div class="stats">
@@ -182,12 +183,20 @@ border-top: none;
         🎣 Наживка: <span id="cur-bait-name">...</span> (<span id="cur-bait-count">0</span>)
     </div>
     <button class="btn" onclick="showScreen('locs')">➡️ НА ВОДУ</button>
-    <button class="btn" onclick="showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
-    <button class="btn" onclick="showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
-    <button class="btn" onclick="showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
+    <button class="btn" onclick="document.getElementById('s-backpack').play(); showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
+    <button class="btn" onclick="document.getElementById('s-door').play(); showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
+    <button class="btn" onclick="document.getElementById('s-door').play(); showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
     <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
+    <div style="margin-top:15px;">
+    <img src="Герб риботина.png" style="
+        width:90px;
+        border:2px solid #ffcc80;
+        border-radius:10px;
+        box-shadow:0 0 10px #ffcc80;
+    ">
+</div>
 </div>
 
 <div id="backpack" class="screen">
@@ -208,7 +217,7 @@ border-top: none;
         <div id="inv-gear"></div>
     </div>
 
-    <button class="btn" onclick="showScreen('menu')">НАЗАД В МЕНЮ</button>
+    <button class="btn" onclick="showScreen('game')">⬅️ НАЗАД</button>
 </div>
 <div id="fishshop" class="screen">
 <h3>🎣 РИБАЛЬСЬКИЙ МАГАЗИН</h3>
@@ -222,7 +231,7 @@ border-top: none;
 
 <div id="fishshop-items"></div>
 
-<button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+<button class="btn" onclick="showScreen('game')">⬅️ НАЗАД</button>
 </div>
 
     <div id="foodshop" class="screen">
@@ -252,28 +261,54 @@ border-top: none;
 </div>
 
 <div id="game" class="screen" style="padding:0;">
+
     <div id="game-view" onclick="cast(event)">
-    <div id="day-overlay"></div>
+        <div id="day-overlay"></div>
+        <div id="water"></div>
 
-    <div id="water"></div> <!-- ВОДА -->
+        <div id="rod-visual"></div>
+        <div id="bobber">
+            <div class="ant"></div>
+            <div class="bod"></div>
+        </div>
 
-    <div id="rod-visual"></div>
-    <div id="bobber"><div class="ant"></div><div class="bod"></div></div>
         <div id="fight-ui">
             <b style="color:var(--neon)">КЛЮЄ! ТЯГНИ!</b>
-            <div style="font-size:12px;">НАТЯГ ЛІСКИ</div>
-<div class="f-bar">
-    <div id="t-fill" style="width:0; background:var(--neon); height:100%;"></div>
-</div>
 
-<div style="font-size:12px;">ВИТЯГУЄШ РИБУ</div>
-<div class="f-bar">
-    <div id="p-fill" style="width:0; background:#2196f3; height:100%;"></div>
-</div>
-            <button class="btn" style="background:green" onmousedown="startPull()" onmouseup="stopPull()" ontouchstart="startPull()" ontouchend="stopPull()">ТЯГНИ 🎣</button>
+            <div style="font-size:12px;">НАТЯГ ЛІСКИ</div>
+            <div class="f-bar">
+                <div id="t-fill" style="width:0; background:var(--neon); height:100%;"></div>
+            </div>
+
+            <div style="font-size:12px;">ВИТЯГУЄШ РИБУ</div>
+            <div class="f-bar">
+                <div id="p-fill" style="width:0; background:#2196f3; height:100%;"></div>
+            </div>
+
+            <button class="btn"
+            style="background:green"
+            onmousedown="startPull()"
+            onmouseup="stopPull()"
+            ontouchstart="startPull()"
+            ontouchend="stopPull()">
+            ТЯГНИ 🎣
+            </button>
         </div>
     </div>
-    <button class="btn" onclick="exitGame()">В МЕНЮ</button>
+
+    <!-- КНОПКИ ПІД ЧАС РИБАЛКИ -->
+    <div style="display:flex; gap:5px; padding:5px;">
+        <button class="btn" onclick="showScreen('backpack')" style="flex:1;">🎒 ІНВЕНТАР</button>
+        <button class="btn" onclick="showScreen('inv')" style="flex:1;">🧺 САДОК</button>
+        <button class="btn" onclick="exitGame()" style="flex:1;">🏠 ДОДОМУ</button>
+    </div>
+
+</div>
+    <div style="display:flex; gap:5px; padding:5px;">
+<button class="btn" onclick="showScreen('backpack')" style="flex:1;">🎒 ІНВЕНТАР</button>
+<button class="btn" onclick="showScreen('inv')" style="flex:1;">🧺 САДОК</button>
+<button class="btn" onclick="exitGame()" style="flex:1;">🏠 ДОДОМУ</button>
+</div>
 </div>
 
 <div id="inv" class="screen">
@@ -530,16 +565,24 @@ document.getElementById('xp-fill').style.width = percent + "%";
 document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
     }
 
-    function showScreen(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'fishshop') switchShop('baits');
-        if(id === 'foodshop') switchShop('food');
-        if(id === 'backpack') renderBackpack();
-        if(id === 'achs') renderAchs();
-        if(id === 'locs') renderLocs();
-        if(id === 'inv') renderInv();
-    }
+   let lastScreen = "menu";
+
+function showScreen(id){
+
+    if(id !== "game") lastScreen = id;
+
+    document.querySelectorAll('.screen')
+        .forEach(s => s.classList.remove('active'));
+
+    document.getElementById(id).classList.add('active');
+
+    if(id === 'fishshop') switchShop('baits');
+    if(id === 'foodshop') switchShop('food');
+    if(id === 'backpack') renderBackpack();
+    if(id === 'achs') renderAchs();
+    if(id === 'locs') renderLocs();
+    if(id === 'inv') renderInv();
+}
 
   function switchShop(cat, e) {
 
