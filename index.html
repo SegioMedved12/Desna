@@ -473,12 +473,13 @@ const ACHS = [
 ];
 
     const LOCATIONS = [
-        {n: "Топольки", img: "topolki.jpg", rank: 1},
-        {n: "Біля бутки", img: "butka.jpg", rank: 2},
-        {n: "Біля парома", img: "parom.jpg", rank: 4},
-        {n: "На кручі ", img: "Kholm.jpg", rank: 6},
-        {n: "Попове", img: "popove.jpg", rank: 8},
-        {n: "Сохатське", img: "sohatske.jpg", rank: 10},
+        {n: "Риботин", img: "Rybotyn.jpg", rank: 1},
+        {n: "Топольки", img: "topolki.jpg", rank: 2},
+        {n: "Біля бутки", img: "butka.jpg", rank: 4},
+        {n: "Біля парома", img: "parom.jpg", rank: 6},
+        {n: "На кручі ", img: "Kholm.jpg", rank: 8},
+        {n: "Попове", img: "popove.jpg", rank: 10},
+        {n: "Сохатське", img: "sohatske.jpg", rank: 12},
         {n: "Журавльове", img: "Zhuravlove.jpg", rank: 16}
     ];
 
@@ -1150,7 +1151,16 @@ updateUI();
 });
 
 }
-    function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
+    function renderLocs() {
+    document.getElementById('loc-list').innerHTML =
+    LOCATIONS.map((l, i) =>
+        `<button class="btn"
+            onclick="p.rank>=${l.rank}?goToLoc(${i}):null"
+            ${p.rank<l.rank?'disabled':''}>
+            ${l.n} (потрібен р-д ${l.rank})
+        </button>`
+    ).join('');
+}
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); p.daily.quests.forEach(q=>{
 
     if(q.type === "sell"){
