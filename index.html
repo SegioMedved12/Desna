@@ -76,14 +76,24 @@ body {
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
      
-        #rod-visual{
+   #rod{
     position:absolute;
     bottom:0;
     left:0;
-    width:140px;
-    height:12px;
-    background: linear-gradient(to right, #8b5a2b, #c69c6d);
-    border-radius: 6px;
+    width:260px;
+    height:260px;
+    pointer-events:none;
+}
+
+#rod-img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+
+    /* точка, де рука тримає вудку */
+    transform-origin: 18% 88%;
+
+    transition: transform 0.15s linear;
 }
         #bobber { position: absolute; display: none; z-index: 5; }
         .ant { width: 3px; height: 15px; background: red; margin: 0 auto; }
@@ -283,7 +293,8 @@ border-top: none;
         <div id="day-overlay"></div>
         <div id="water"></div>
         <div id="line"></div>
-        <div id="rod-visual"></div>
+        <div id="rod">
+    <img src="rod.png" id="rod-img">
         <div id="bobber">
             <div class="ant"></div>
             <div class="bod"></div>
@@ -982,7 +993,7 @@ function selectBait(name){
     document.getElementById('p-fill').style.width = progress + "%";
     document.getElementById('t-fill').style.width = tension + "%";
 
-    // натяг зелений → жовтий → червоний
+    // колір натягу
     if(tension < 50){
         document.getElementById('t-fill').style.background = "lime";
     } else if(tension < 80){
@@ -991,16 +1002,30 @@ function selectBait(name){
         document.getElementById('t-fill').style.background = "red";
     }
 
-    let angle = 15 - tension/3;
+    let rod = document.getElementById('rod-visual');
 
-if(tension > 70){
-    document.getElementById('rod-visual').style.filter = "brightness(1.3)";
-} else {
-    document.getElementById('rod-visual').style.filter = "brightness(1)";
-}
-    document.getElementById('rod-visual').style.transform = `rotate(${angle}deg)`;
-}
+    // кут
+    let angle = -20 + tension * 0.25;
 
+    // прогин
+    let bend = tension * 0.15;
+
+    // тряска при великій рибі
+    let shake = 0;
+    if(tension > 60){
+        shake = Math.sin(Date.now()/80) * 2;
+    }
+
+    rod.style.transform =
+        `rotate(${angle + shake}deg) skewX(${-bend}deg) scaleY(${1 + tension/300})`;
+
+    // підсвітка при критичному натягу
+    if(tension > 75){
+        rod.style.filter = "brightness(1.4)";
+    } else {
+        rod.style.filter = "brightness(1)";
+    }
+}
     // Покращена функція вибору риби (враховує час доби та наживку)
 function catchFish() {
     const bData = GEAR_DATA.baits.find(x => x.n === p.selBait);
@@ -1114,6 +1139,38 @@ function addXP(amount){
         p.xp -= getRequiredXP(p.rank);
         p.rank++;
         showPopup("⬆️ Новий розряд: " + p.rank);
+    }
+}
+   function updateRod(){
+    let rod = document.getElementById('rod-img');
+    if(!rod) return;
+
+    if(state === 'idle'){
+        rod.style.transform = "rotate(-25deg)";
+    }
+
+    if(state === 'cast'){
+        rod.style.transform = "rotate(-55deg)";
+    }
+
+    if(state === 'wait'){
+        rod.style.transform = "rotate(-30deg)";
+    }
+
+    if(state === 'bite'){
+        let shake = Math.sin(Date.now()/80) * 2;
+        rod.style.transform = `rotate(${-25 + shake}deg) skewX(-5deg)`;
+    }
+
+    if(state === 'fight'){
+        let bend = tension * 0.12;
+        let shake = Math.sin(Date.now()/60) * (tension/25);
+        rod.style.transform =
+            `rotate(${-15 + shake}deg) skewX(${-bend}deg) scaleY(${1 + tension/300})`;
+    }
+
+    if(state === 'reel'){
+        rod.style.transform = "rotate(-40deg)";
     }
 }
     function updateDayNight(){
@@ -1269,7 +1326,11 @@ updateUI();
     if(state !== 'idle'){
         updateLine();
     }
+
+    updateRod();   // <-- ось це додати
+
 }, 30);
+    
 </script>
 </body>
 </html>
