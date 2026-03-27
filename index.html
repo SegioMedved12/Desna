@@ -76,24 +76,19 @@ body {
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
      
-   #rod{
+  #rod-visual{
     position:absolute;
-    bottom:0;
-    left:0;
-    width:260px;
-    height:260px;
-    pointer-events:none;
-}
-
-#rod-img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-
-    /* точка, де рука тримає вудку */
-    transform-origin: 18% 88%;
-
-    transition: transform 0.15s linear;
+    bottom:-60px;
+    right:18%;
+    width:220px;
+    height:320px;
+    background: url('rod.png') no-repeat center/contain;
+    transform-origin: bottom center;
+    transform: rotate(15deg);
+    transition: transform 0.1s;
+    z-index: 10;
+    display: none;
+    pointer-events: none;
 }
         #bobber { position: absolute; display: none; z-index: 5; }
         .ant { width: 3px; height: 15px; background: red; margin: 0 auto; }
@@ -136,11 +131,7 @@ border-radius:10px;
 box-shadow:0 0 20px black;
 }
 #line{
-    position:absolute;
-    width:2px;
-    background:linear-gradient(to bottom, #fff, #aaa);
-    transform-origin: top;
-    z-index:4;
+    display:none;
 }
 
 #game-popup button{
@@ -292,9 +283,6 @@ border-top: none;
     <div id="game-view" onclick="cast(event)">
         <div id="day-overlay"></div>
         <div id="water"></div>
-        <div id="line"></div>
-        <div id="rod">
-    <img src="rod.png" id="rod-img">
         <div id="bobber">
             <div class="ant"></div>
             <div class="bod"></div>
@@ -968,7 +956,6 @@ function selectBait(name){
     document.getElementById('bobber').style.top = (e.clientY - rect.top) + "px";
     document.getElementById('bobber').style.display = 'block';
     document.getElementById('rod-visual').style.display = 'block';
-    document.getElementById('line').style.display = 'block';
 
     setTimeout(() => {
 
@@ -1003,17 +990,13 @@ function selectBait(name){
     }
 
     let rod = document.getElementById('rod-visual');
+let angle = 15 - tension/3;
 
-    // кут
-    let angle = -20 + tension * 0.25;
-
-    // прогин
-    let bend = tension * 0.15;
-
-    // тряска при великій рибі
-    let shake = 0;
-    if(tension > 60){
-        shake = Math.sin(Date.now()/80) * 2;
+if(tension > 70){
+    document.getElementById('rod-visual').style.filter = "brightness(1.3)";
+} else {
+    document.getElementById('rod-visual').style.filter = "brightness(1)";
+}
     }
 
     rod.style.transform =
@@ -1100,78 +1083,29 @@ function playRandomMusic(){
     function getRequiredXP(rank){
     return 500 + rank * rank * 200;
 }
-function updateLine(){
-
-    let rodEl = document.getElementById('rod-visual');
-    let bobEl = document.getElementById('bobber');
-    let gameEl = document.getElementById('game-view');
-
-    let rod = rodEl.getBoundingClientRect();
-    let bob = bobEl.getBoundingClientRect();
-    let game = gameEl.getBoundingClientRect();
-
-    // 👉 КІНЕЦЬ ВУДКИ (правий верхній край)
-    let x1 = rod.right - game.left;
-    let y1 = rod.top - game.top;
-
-    // 👉 ПОПЛАВОК (центр)
-    let x2 = bob.left + bob.width / 2 - game.left;
-    let y2 = bob.top + bob.height / 2 - game.top;
-
-    let dx = x2 - x1;
-    let dy = y2 - y1;
-
-    let dist = Math.sqrt(dx*dx + dy*dy);
-
-    let line = document.getElementById('line');
-
-    line.style.left = x1 + "px";
-    line.style.top = y1 + "px";
-    line.style.height = dist + "px";
-    line.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
-}
 function addXP(amount){
-    p.xp += amount;
 
-    console.log(p.xp + " / " + getRequiredXP(p.rank)); // 👈 СЮДИ
+    p.xp += amount;
 
     while(p.xp >= getRequiredXP(p.rank)){
         p.xp -= getRequiredXP(p.rank);
         p.rank++;
-        showPopup("⬆️ Новий розряд: " + p.rank);
+
+        showPopup("⭐ Новий розряд: " + p.rank);
     }
+
+    updateUI();
 }
-   function updateRod(){
-    let rod = document.getElementById('rod-img');
-    if(!rod) return;
+    function resetGame(){
 
-    if(state === 'idle'){
-        rod.style.transform = "rotate(-25deg)";
-    }
+    state = 'idle';
+    pullActive = false;
+    tension = 0;
+    progress = 0;
 
-    if(state === 'cast'){
-        rod.style.transform = "rotate(-55deg)";
-    }
-
-    if(state === 'wait'){
-        rod.style.transform = "rotate(-30deg)";
-    }
-
-    if(state === 'bite'){
-        let shake = Math.sin(Date.now()/80) * 2;
-        rod.style.transform = `rotate(${-25 + shake}deg) skewX(-5deg)`;
-    }
-
-    if(state === 'fight'){
-        let bend = tension * 0.12;
-        let shake = Math.sin(Date.now()/60) * (tension/25);
-        rod.style.transform =
-            `rotate(${-15 + shake}deg) skewX(${-bend}deg) scaleY(${1 + tension/300})`;
-    }
-
-    if(state === 'reel'){
-        rod.style.transform = "rotate(-40deg)";
-    }
+    document.getElementById('bobber').style.display = 'none';
+    document.getElementById('fight-ui').style.display = 'none';
+    document.getElementById('line').style.display = 'none';
 }
     function updateDayNight(){
 
@@ -1321,16 +1255,6 @@ updateUI();
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У садку порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
-    updateUI();
-    setInterval(() => {
-    if(state !== 'idle'){
-        updateLine();
-    }
-
-    updateRod();   // <-- ось це додати
-
-}, 30);
-    
 </script>
 </body>
 </html>
