@@ -217,7 +217,7 @@ border-top: none;
         <div id="inv-gear"></div>
     </div>
 
-    <button class="btn" onclick="showScreen('game')">⬅️ НАЗАД</button>
+    <button class="btn" onclick="goBack()">⬅️ НАЗАД</button>
 </div>
 <div id="fishshop" class="screen">
 <h3>🎣 РИБАЛЬСЬКИЙ МАГАЗИН</h3>
@@ -231,7 +231,7 @@ border-top: none;
 
 <div id="fishshop-items"></div>
 
-<button class="btn" onclick="showScreen('game')">⬅️ НАЗАД</button>
+<button class="btn" onclick="goBack()">⬅️ НАЗАД</button>
 </div>
 
     <div id="foodshop" class="screen">
@@ -245,13 +245,13 @@ border-top: none;
 
 <div id="foodshop-items"></div>
 
-<button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+<button class="btn" onclick="goBack()">НАЗАД</button>
 
 </div>
 <div id="achs" class="screen">
     <h3>МОЇ ДОСЯГНЕННЯ</h3>
     <div id="ach-container"></div>
-    <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+    <button class="btn" onclick="goBack()">НАЗАД</button>
 </div>
 
 <div id="locs" class="screen">
@@ -304,17 +304,12 @@ border-top: none;
     </div>
 
 </div>
-    <div style="display:flex; gap:5px; padding:5px;">
-<button class="btn" onclick="showScreen('backpack')" style="flex:1;">🎒 ІНВЕНТАР</button>
-<button class="btn" onclick="showScreen('inv')" style="flex:1;">🧺 САДОК</button>
-<button class="btn" onclick="exitGame()" style="flex:1;">🏠 ДОДОМУ</button>
-</div>
-</div>
+   
 
 <div id="inv" class="screen">
     <h3>🧺 САДОК (РИБА)</h3>
     <div id="fish-list" style="text-align: left; padding: 10px;"></div>
-    <button class="btn" onclick="showScreen('menu')">НАЗАД</button>
+    <button class="btn" onclick="goBack()">НАЗАД</button>
 </div>
 <div id="game-popup">
     <div id="popup-text"></div>
@@ -495,7 +490,7 @@ setInterval(() => {
     let linePower = GEAR_DATA.lines[p.gear.line].m;
     let reelPower = GEAR_DATA.reels[p.gear.reel].m;
 
-    let fishPower = fishW * 2;
+    let fishPower = fishW * (1 + Math.random());
 
     if(pullActive){
 
@@ -569,15 +564,19 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
 
 function showScreen(id){
 
-    if(id !== "game") lastScreen = id;
+    let current = document.querySelector('.screen.active');
+
+    if(current && current.id !== id){
+        lastScreen = current.id;
+    }
 
     document.querySelectorAll('.screen')
         .forEach(s => s.classList.remove('active'));
 
     document.getElementById(id).classList.add('active');
 
-    if(id === 'fishshop') switchShop('baits');
-    if(id === 'foodshop') switchShop('food');
+    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab'));
+    if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab'));
     if(id === 'backpack') renderBackpack();
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
@@ -649,7 +648,9 @@ function showScreen(id){
     updateUI();
     switchShop(cat);
 }
-
+function goBack(){
+    showScreen(lastScreen);
+}
     function renderBackpack() {
 
     // Наживки
@@ -663,7 +664,7 @@ function showScreen(id){
             <button class="btn-small"
                 onclick="selectBait('${safeName}')"
                 ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
-                ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРРАТИ'}
+                ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
             </button>
         </div>`;
 
@@ -997,7 +998,7 @@ updateUI();
     function renderLocs() { document.getElementById('loc-list').innerHTML = LOCATIONS.map((l, i) => `<button class="btn" onclick="p.rank>=${l.rank}?goToLoc(${i}):null" ${p.rank<l.rank?'disabled':''}>${l.n} (Р-д ${l.rank})</button>`).join(''); }
     function goToLoc(i) { document.getElementById('game-view').style.backgroundImage = `url('${LOCATIONS[i].img}')`; showScreen('game'); resetGame(); }
     function sellFish() { document.getElementById('my-sound').play(); let sum = p.inv.reduce((a, f) => a + (f.w * 130), 0); p.money += sum; p.inv = []; updateUI(); showPopup("💰 Улов продано за "+Math.floor(sum)+"₴"); }
-    function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У саду порожньо"; }
+    function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У садку порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
 
     updateUI();
