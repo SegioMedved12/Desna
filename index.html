@@ -1125,10 +1125,10 @@ overlay.style.background = "rgba(0,0,30,0.2)";
 
 }
 function showPopup(text){
+    console.log("popup:", text); // 🔥 тест
     document.getElementById("popup-text").innerText = text;
     document.getElementById("game-popup").style.display = "block";
 }
-
 function closePopup(){
     document.getElementById("game-popup").style.display = "none";
 }
