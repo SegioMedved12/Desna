@@ -281,6 +281,7 @@ border-top: none;
 <div id="game" class="screen" style="padding:0;">
 
     <div id="game-view" onclick="cast(event)">
+        <div id="rod-visual"></div>
         <div id="day-overlay"></div>
         <div id="water"></div>
         <div id="bobber">
@@ -980,7 +981,6 @@ function selectBait(name){
     document.getElementById('p-fill').style.width = progress + "%";
     document.getElementById('t-fill').style.width = tension + "%";
 
-    // колір натягу
     if(tension < 50){
         document.getElementById('t-fill').style.background = "lime";
     } else if(tension < 80){
@@ -990,19 +990,14 @@ function selectBait(name){
     }
 
     let rod = document.getElementById('rod-visual');
-let angle = 15 - tension/3;
+    let angle = 15 - tension/3;
 
-if(tension > 70){
-    document.getElementById('rod-visual').style.filter = "brightness(1.3)";
-} else {
-    document.getElementById('rod-visual').style.filter = "brightness(1)";
-}
-    }
+    let shake = (Math.random() - 0.5) * 4;
+    let bend = tension / 20;
 
     rod.style.transform =
         `rotate(${angle + shake}deg) skewX(${-bend}deg) scaleY(${1 + tension/300})`;
 
-    // підсвітка при критичному натягу
     if(tension > 75){
         rod.style.filter = "brightness(1.4)";
     } else {
@@ -1096,17 +1091,7 @@ function addXP(amount){
 
     updateUI();
 }
-    function resetGame(){
-
-    state = 'idle';
-    pullActive = false;
-    tension = 0;
-    progress = 0;
-
-    document.getElementById('bobber').style.display = 'none';
-    document.getElementById('fight-ui').style.display = 'none';
-    document.getElementById('line').style.display = 'none';
-}
+    
     function updateDayNight(){
 
 let overlay = document.getElementById("day-overlay");
@@ -1145,13 +1130,14 @@ function closePopup(){
 }
    function resetGame() {
     state = 'idle';
-    pullActive = false; // 🔥 ОЦЕ ВАЖЛИВО
+    pullActive = false;
+
     document.getElementById('bobber').style.display = 'none';
-    document.getElementById('line').style.height = "0px";
     document.getElementById('fight-ui').style.display = 'none';
     document.getElementById('rod-visual').style.display = 'none';
-    document.getElementById('line').style.display = 'none';
+
     document.getElementById('s-reel').pause();
+
     progress = 0;
     tension = 0;
 }
