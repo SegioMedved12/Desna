@@ -864,7 +864,7 @@ function sellGear(type, idx){
     updateUI();
     renderQuests();
 }
-    function useFood(name) {
+   function useFood(name) {
 
     let it =
         GEAR_DATA.food.find(f => f.n === name) ||
@@ -878,25 +878,21 @@ function sellGear(type, idx){
 
         p.hng = Math.min(100, p.hng + it.h);
 
-        p.xp += it.xp;
-
-        p.rank = Math.floor(p.xp/1000)+1;
+        addXP(it.xp); // ✅ ТІЛЬКИ ТАК
 
         showPopup(`Ви використали: ${name}`);
 
         renderBackpack();
         updateUI();
+
         p.daily.quests.forEach(q=>{
-
-    if(q.type === "eat"){
-        q.progress++;
-    }
-
-    if(q.progress >= q.target){
-        q.done = true;
-    }
-
-});
+            if(q.type === "eat"){
+                q.progress++;
+            }
+            if(q.progress >= q.target){
+                q.done = true;
+            }
+        });
     }
 }
 function selectBait(name){
