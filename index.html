@@ -116,31 +116,45 @@ height:100%;
 pointer-events:none;
 transition: background 1s linear;
 }
-#game-popup{
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#2d1b17;
-border:2px solid #ffcc80;
-padding:20px;
-z-index:999;
-display:none;
-text-align:center;
-border-radius:10px;
-box-shadow:0 0 20px black;
-}
-#line{
-    display:none;
+#game-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: #2d1b17;
+    border: 2px solid #ffcc80;
+    padding: 20px 25px;
+    z-index: 999;
+    display: none;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 0 20px black;
+    color: white;
+    max-width: 300px;
+    transition: all 0.3s ease;
+    opacity: 0;
 }
 
-#game-popup button{
-margin-top:10px;
-padding:8px 20px;
-background:#4e342e;
-border:1px solid #ffcc80;
-color:white;
-cursor:pointer;
+#game-popup.show {
+    display: block;
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#game-popup button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    background: #4e342e;
+    border: 1px solid #ffcc80;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+#game-popup button:hover {
+    background: #673c31;
 }
 
 #water{
@@ -1127,12 +1141,14 @@ overlay.style.background = "rgba(0,0,30,0.2)";
 function showPopup(text) {
     const popup = document.getElementById('game-popup');
     const popupText = document.getElementById('popup-text');
-    popupText.textContent = text; // вставляємо текст
-    popup.style.display = 'block'; // показуємо попап
+    popupText.textContent = text;
+    popup.classList.add('show');
 }
 
 function closePopup() {
-    document.getElementById('game-popup').style.display = 'none';
+    const popup = document.getElementById('game-popup');
+    popup.classList.remove('show');
+    setTimeout(() => { popup.style.display = 'none'; }, 300); // ховаємо після анімації
 }
    function resetGame() {
     state = 'idle';
