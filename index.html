@@ -703,13 +703,22 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
    let lastScreen = "menu";
 
 function showScreen(id){
-    // ховаємо всі екрани
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+    // Зберігаємо попередній екран
+    const current = document.querySelector('.screen.active');
+    if(current){
+        lastScreen = current.id;
+    }
+
+    // ховаємо всі
+    document.querySelectorAll('.screen')
+        .forEach(s => s.classList.remove('active'));
+
     // показуємо потрібний
     const scr = document.getElementById(id);
     if(scr) scr.classList.add('active');
-    
-    // додатково можна відновити інвентар/магазин
+
+    // оновлення контенту
     if(id === 'backpack') renderBackpack();
     if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab.active-tab'));
     if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab.active-tab'));
