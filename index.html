@@ -76,12 +76,12 @@ body {
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
      
-  #rod-visual{
+ #rod-visual{
     position:absolute;
     bottom:-60px;
     right:18%;
-    width:220px;
-    height:320px;
+    width:147px;
+    height:213px;
     background: url('rod.png') no-repeat center/contain;
     transform-origin: bottom center;
     transform: rotate(15deg);
@@ -346,7 +346,7 @@ style="
     <div id="fish-list" style="text-align: left; padding: 10px;"></div>
     <button class="btn" onclick="goBack()">НАЗАД</button>
 </div>
-<div id="game-popup">
+<div id="game-popup" onclick="event.stopPropagation()">
     <div id="popup-text"></div>
     <button onclick="closePopup()">OK</button>
 </div>
@@ -389,44 +389,70 @@ style="
         {n: "Сазан", min: 3.0, max: 15.0, p: 70},
         {n: "Сом", min: 5.0, max: 40.0, p: 100},
         {n: "Густера", min: 0.3, max: 2.0, p: 18},
-        {n: "Уклейка", min: 0.1, max: 0.8, p: 10}
+        {n: "Судак", min: 1.0, max: 8.0, p: 70},
+        {n: "Головень", min: 0.5, max: 4.0, p: 45},
+        {n: "Жерех", min: 1.0, max: 6.0, p: 60},
+        {n: "Чехоня", min: 0.3, max: 1.5, p: 25},
+        {n: "Верховодка", min: 0.05, max: 0.5, p: 10},
+        {n: "Стерлядь", min: 2.0, max: 10.0, p: 150}
     ],
 
     baits: [
-        {n: "Хліб", p: 20, target: ["Плітка","Карась","Йорж","Краснопірка","Уклейка"], size: [0.1, 1.2]},
-        {n: "Черв'як", p: 50, target: ["Окунь","Срібний карась","Карась","Линь","Линок","Плітка","Щука"], size: [0.2, 2.5]},
-        {n: "Тісто", p: 80, target: ["Лящ","Плітка","Карась","Густера","Краснопірка"], size: [0.5, 4.5]},
-        {n: "Кукурудза", p: 150, target: ["Короп","Білий амур","Сазан","Лящ"], size: [2, 20]},
-        {n: "Бойли", p: 300, target: ["Трофейний короп","Сом","Щука","Сазан"], size: [8, 100]}
-    ],
+    {n: "Хліб", p: 20, target: ["Плітка","Краснопірка","Верховодка","Густера"], size: [0.1, 1.0]},
+    
+    {n: "Черв'як", p: 50, target: [
+        "Окунь","Срібний карась","Карась","Линь","Линок",
+        "Плітка","Йорж","Густера","Лящ","Судак"
+    ], size: [0.2, 3.5]},
+    
+    {n: "Опариш", p: 70, target: [
+        "Плітка","Густера","Чехоня","Верховодка","Лящ","Краснопірка"
+    ], size: [0.1, 4.0]},
+    
+    {n: "Тісто", p: 80, target: [
+        "Лящ","Плітка","Карась","Густера","Краснопірка","Линь"
+    ], size: [0.3, 4.5]},
+    
+    {n: "Перловка", p: 90, target: [
+        "Лящ","Плітка","Густера","Карась"
+    ], size: [0.5, 5]},
+    
+    {n: "Кукурудза", p: 150, target: [
+        "Короп","Білий амур","Сазан","Лящ","Карась"
+    ], size: [2, 20]},
+    
+    {n: "Живець", p: 300, target: [
+        "Щука","Судак","Сом","Жерех","Головень"
+    ], size: [3, 80]}
+],
 
     rods: [
-        {n: "Bamboo Stick", p: 200, m: 2, r: 1},
-        {n: "River Star", p: 1500, m: 10, r: 3},
-        {n: "Carbon Pro", p: 5000, m: 35, r: 7},
-        {n: "Titan Deep", p: 18000, m: 150, r: 12},
-        {n: "Ultimate Desna", p: 60000, m: 500, r: 20}
+        {n: "Bamboo Stick", p: 200, m: 2},
+        {n: "River Star", p: 1500, m: 10},
+        {n: "Carbon Pro", p: 5000, m: 30},
+        {n: "Titan Deep", p: 18000, m: 120},
+        {n: "Ultimate Desna", p: 60000, m: 300}
     ],
 
     reels: [
-        {n: "Old Wheel", p: 150, m: 1.2, r: 1},
-        {n: "Spark 100", p: 1200, m: 3, r: 4},
-        {n: "Sea Master", p: 5000, m: 8, r: 8},
-        {n: "Turbo Reel", p: 15000, m: 25, r: 15},
-        {n: "Quantum X", p: 40000, m: 60, r: 20}
+        {n: "Old Wheel", p: 150, m: 1.2},
+        {n: "Spark 100", p: 1200, m: 3},
+        {n: "Sea Master", p: 5000, m: 5},
+        {n: "Turbo Reel", p: 15000, m: 20},
+        {n: "Quantum X", p: 40000, m: 50}
     ],
 
     lines: [
-        {n: "Mono 2kg", p: 50, m: 2, r: 1},
-        {n: "Mono 10kg", p: 500, m: 10, r: 5},
-        {n: "Braid 35kg", p: 1500, m: 35, r: 10},
-        {n: "Heavy Line", p: 6000, m: 120, r: 15},
-        {n: "Steel Wire", p: 20000, m: 450, r: 22}
+        {n: "Mono 2kg", p: 50, m: 2},
+        {n: "Mono 10kg", p: 500, m: 10},
+        {n: "Braid 35kg", p: 1500, m: 30},
+        {n: "Heavy Line", p: 6000, m: 100},
+        {n: "Steel Wire", p: 20000, m: 300}
     ],
 
     food: [
         {n:"🥖 Хліб", p:30, h:20, xp:0},
-        {n:"🥓 Сало", p:120, h:60, xp:0},
+        {n:"🥓 Сало", p:120, h:60, xp:5},
         {n:"🍲 Борщ", p:180, h:70, xp:10},
         {n:"🥔 Картопля", p:60, h:25, xp:0},
         {n:"🍗 Курка", p:220, h:80, xp:20},
@@ -436,11 +462,11 @@ style="
     ],
 
     alcohol: [
-        {n:"🥃 Горілка", p:250, h:-10, xp:200},
+        {n:"🥃 Горілка", p:250, h:-15, xp:80},
         {n:"🍺 Пиво", p:120, h:5, xp:40},
-        {n:"🍷 Вино", p:300, h:-5, xp:150},
-        {n:"🥃 Самогон", p:180, h:-20, xp:250},
-        {n:"🍸 Коньяк", p:600, h:-30, xp:400}
+        {n:"🍷 Вино", p:300, h:5, xp:100},
+        {n:"🥃 Самогон", p:180, h:-20, xp:200},
+        {n:"🍸 Коньяк", p:600, h:-30, xp:250}
     ]
 };
 const ACHS = [
@@ -483,12 +509,12 @@ const ACHS = [
     reward:{money:300, xp:200}
 },
 
-{
-    n:"Продати улов",
-    target:1,
-    type:"sell",
-    reward:{money:250, xp:150}
-},
+ {
+        n: "Купити 3 приманки",
+        target: 3,
+        type: "shop",
+        reward: { money: 100, xp: 100 },
+    },
 
 {
     n:"Заробити 500₴",
@@ -496,6 +522,13 @@ const ACHS = [
     type:"earn",
     reward:{money:400, xp:250}
 },
+    {
+        n: "Відвідати 2 локації",
+        target: 2,
+        type: "loc",
+        reward: { money: 80, xp: 60 },
+
+    },
 
 {
     n:"З'їсти 2 їжі",
@@ -505,6 +538,10 @@ const ACHS = [
 }
 
 ];
+    function getQuestText(q){
+    return q.n +
+    "<br><small>💰 " + q.reward.money + "₴ | ⭐ " + q.reward.xp + " XP</small>";
+}
 
     const LOCATIONS = [
         {n: "Риботин", img: "Rybotyn.jpg", rank: 1},
@@ -584,24 +621,36 @@ setInterval(() => {
     let linePower = GEAR_DATA.lines[p.gear.line].m;
     let reelPower = GEAR_DATA.reels[p.gear.reel].m;
 
-    let fishPower = fishW * (1 + Math.random());
+    let fishPower = Math.pow(fishW, 1.3) * (0.9 + Math.random() * 0.2);
+    // поведінка риби
+    let fishSpeed = 1;
+    let fishStamina = fishW * 8;
 
+    if(fishW < 1){
+        fishSpeed = 1.5;     // маленька риба швидка
+        fishStamina *= 0.5;
+    }
+
+    if(fishW > 5){
+        fishSpeed = 0.7;     // велика риба повільна
+        fishStamina *= 2;
+    }
     if(pullActive){
 
         let gearPower = (rodPower * 0.6 + reelPower * 0.4);
         let pull = gearPower / fishPower;
 
-        progress += pull * 2;
-
+        progress += pull * 2 * fishSpeed;
+        
         let strain = fishPower / linePower;
-        tension += strain * 1.8;
+        tension += strain * 1.2;
 
         document.getElementById('s-reel').play();
 
     }
     else{
 
-        progress -= 0.02;
+        progress -= 0.03 * fishSpeed;
         tension -= 0.3;
 
         document.getElementById('s-reel').pause();
@@ -675,7 +724,20 @@ function showScreen(id){
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
     if(id === 'inv') renderInv();
-    if(id === 'quests') renderQuests();
+    if(id === 'quests') {
+    renderQuests(); // відображає щоденні квести
+    showQuests();   // додає додаткові квест-картки з DAILY_POOL
+}
+}
+    function showQuests() {
+    const container = document.getElementById("quest-list");
+    container.innerHTML = "";
+    DAILY_POOL.forEach(q => {
+        const div = document.createElement("div");
+        div.className = "ach-card"; // можна стилізувати як картку
+        div.innerHTML = getQuestText(q);
+        container.appendChild(div);
+    });
 }
 function renderQuests(){
 
@@ -948,6 +1010,8 @@ function selectBait(name){
 
    function cast(e){
 
+    if(document.getElementById('game-popup').classList.contains('show')) return;
+
     if(state !== 'idle') return;
 
     let rect = e.currentTarget.getBoundingClientRect();
@@ -1141,14 +1205,19 @@ overlay.style.background = "rgba(0,0,30,0.2)";
 function showPopup(text) {
     const popup = document.getElementById('game-popup');
     const popupText = document.getElementById('popup-text');
-    popupText.textContent = text;
+
+    popup.style.display = 'block';
+    popupText.innerText = text;
     popup.classList.add('show');
 }
-
 function closePopup() {
     const popup = document.getElementById('game-popup');
-    popup.classList.remove('show');
-    setTimeout(() => { popup.style.display = 'none'; }, 300); // ховаємо після анімації
+
+    popup.classList.remove('show');  // прибирає анімацію
+
+    setTimeout(() => {
+        popup.style.display = 'none';  // повністю ховає
+    }, 300);
 }
    function resetGame() {
     state = 'idle';
@@ -1163,6 +1232,7 @@ function closePopup() {
     progress = 0;
     tension = 0;
 }
+    
   function renderAchs(){
 
 document.getElementById('ach-container').innerHTML =
@@ -1231,7 +1301,7 @@ updateUI();
     }
 
 }); }
-    function sellFish() {
+   function sellFish() {
 
     document.getElementById('my-sound').play();
 
@@ -1239,9 +1309,10 @@ updateUI();
 
     p.money += sum;
     p.inv = [];
-        
+
     p.dailyEarned += sum;
-    // квести
+
+    // прогрес квестів
     p.daily.quests.forEach(q => {
 
         if(q.type === "sell"){
@@ -1258,8 +1329,10 @@ updateUI();
 
     });
 
+    showPopup(`💰 Продано улов на ${sum}₴`);
+
+    renderInv();
     updateUI();
-    showPopup("💰 Улов продано за " + Math.floor(sum) + "₴");
 }
     function renderInv() { document.getElementById('fish-list').innerHTML = p.inv.length ? p.inv.map(f => `<div>${f.n} - ${f.w}кг</div>`).join('') : "У садку порожньо"; }
     function exitGame() { resetGame(); showScreen('menu'); }
