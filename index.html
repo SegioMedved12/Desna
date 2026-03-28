@@ -703,27 +703,20 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
    let lastScreen = "menu";
 
 function showScreen(id){
-
-    let current = document.querySelector('.screen.active');
-
-    if(current && current.id !== id){
-        lastScreen = current.id;
-    }
-
-    document.querySelectorAll('.screen')
-        .forEach(s => s.classList.remove('active'));
-
-    document.getElementById(id).classList.add('active');
-
-    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab'));
-    if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab'));
+    // ховаємо всі екрани
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // показуємо потрібний
+    const scr = document.getElementById(id);
+    if(scr) scr.classList.add('active');
+    
+    // додатково можна відновити інвентар/магазин
     if(id === 'backpack') renderBackpack();
+    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab.active-tab'));
+    if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab.active-tab'));
+    if(id === 'inv') renderInv();
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
-    if(id === 'inv') renderInv();
-    if(id === 'quests') {
-    renderQuests();
-}
+    if(id === 'quests') renderQuests();
 }
     function showQuests() {
     const container = document.getElementById("quest-list");
