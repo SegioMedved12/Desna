@@ -107,7 +107,7 @@ body {
         
         .inv-section { margin-bottom: 15px; border: 1px solid #444; border-radius: 5px; padding: 5px; background: #222; }
         .inv-title { font-size: 0.7em; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #444; display: block; }
-        #day-overlay{
+#day-overlay{
 position:absolute;
 top:0;
 left:0;
@@ -166,7 +166,7 @@ height:45%;   /* висота води */
 background:rgba(0,80,150,0.15);
 border-top: none;
 }
-    #xp-fill {
+#xp-fill {
     height: 100%;
     background: linear-gradient(90deg, #00c6ff, #0072ff);
     width: 0%;
@@ -222,7 +222,7 @@ border-top: none;
     <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
     <div style="margin-top:15px;">
-    <img src="Герб риботина.png" 
+    <img src="Gerb.png" 
 onclick="showPopup('Риботи́н — село в Україні, у  Новгород-Сіверського району Чернігівської області. Розташований за 2 км від р. Десна. Символіка:
 На гербі зображена риба (сом) і тин що вказує на назву села (герб є подвійно промовистим). Сом вказує на рибні місця і річку Десна.')"
 style="
@@ -233,8 +233,7 @@ style="
     cursor:pointer;
 ">
 </div>
-</div>
-
+    
 <div id="backpack" class="screen">
     <h3>🎒 ТВІЙ РЮКЗАК</h3>
     
@@ -593,15 +592,13 @@ setInterval(() => {
         p.hr++;
     }
 
-    if(p.hr >= 24){
-        p.hr = 0;
-        p.days++;
-     p.dailyEarned = 0;
-        // 👇 ОЦЕ ДОДАЄМО ТУТ
-        if(p.daily.lastDay !== p.days){
-            generateDailyQuests();
-        }
-    }
+   if(p.hr >= 24){
+    p.hr = 0;
+    p.days++;
+    p.dailyEarned = 0;
+
+    generateDailyQuests();
+}
 
     // голод теж тут логічно
     p.hng -= 0.1;
@@ -725,8 +722,7 @@ function showScreen(id){
     if(id === 'locs') renderLocs();
     if(id === 'inv') renderInv();
     if(id === 'quests') {
-    renderQuests(); // відображає щоденні квести
-    showQuests();   // додає додаткові квест-картки з DAILY_POOL
+    renderQuests();
 }
 }
     function showQuests() {
@@ -804,23 +800,23 @@ function generateDailyQuests(){
 
     let pool = [...DAILY_POOL];
 
-    p.daily.quests = [];
+    // перемішуємо
+    pool.sort(() => Math.random() - 0.5);
 
-    for(let i=0;i<3;i++){
-
-        let r = Math.floor(Math.random()*pool.length);
-
-        let q = JSON.parse(JSON.stringify(pool[r]));
-        q.progress = 0;
-        q.done = false;
-        q.claimed = false;
-
-        p.daily.quests.push(q);
-
-        pool.splice(r,1);
-    }
+    p.daily.quests = pool.slice(0,3).map(q => {
+        return {
+            n: q.n,
+            target: q.target,
+            type: q.type,
+            reward: q.reward,
+            progress: 0,
+            done: false,
+            claimed: false
+        };
+    });
 
     p.daily.lastDay = p.days;
+    localStorage.setItem('desna_backpack_v5', JSON.stringify(p));
 }
     function buy(cat, i) {
     let it = GEAR_DATA[cat][i];
