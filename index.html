@@ -688,7 +688,8 @@ setInterval(() => {
     function updateUI() {
         document.getElementById('money').innerText = Math.floor(p.money);
         document.getElementById('rank').innerText = p.rank;
-        document.getElementById('time').innerText = `${String(p.hr).padStart(2,'0')}:${String(p.min).padStart(2,'0')}`;
+        document.getElementById('time').innerText =
+`${String(p.hr).padStart(2,'0')}:${String(p.min).padStart(2,'0')}`;
         document.getElementById('h-fill').style.width = p.hng + "%";
         document.getElementById('cur-bait-name').innerText = p.selBait || "Немає";
         document.getElementById('cur-bait-count').innerText = p.selBait ? (p.baits[p.selBait] || 0) : 0;
@@ -720,8 +721,8 @@ function showScreen(id){
 
     // оновлення контенту
     if(id === 'backpack') renderBackpack();
-    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab.active-tab') || null);
-    if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab.active-tab'));
+    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab'));
+    if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab'));
     if(id === 'inv') renderInv();
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
@@ -756,12 +757,10 @@ function renderQuests(){
         ? `<button disabled>✔</button>`
         : `<button disabled>...</button>`
     }
-</div>
-`;
+</div>`;
     }).join('');
 
-    document.getElementById("quest-list").innerHTML =
-        html || "Немає завдань";
+    document.getElementById("quest-list").innerHTML = html || "Немає завдань";
 }
 
   function switchShop(cat, e) {
