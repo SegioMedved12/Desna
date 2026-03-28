@@ -720,15 +720,34 @@ function showScreen(id){
 
     // оновлення контенту
     if(id === 'backpack') renderBackpack();
-    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab.active-tab'));
+    if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab.active-tab') || null);
     if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab.active-tab'));
     if(id === 'inv') renderInv();
     if(id === 'achs') renderAchs();
     if(id === 'locs') renderLocs();
     if(id === 'quests') renderQuests();
 }
-    function showQuests() { const container = document.getElementById("quest-list"); container.innerHTML = ""; DAILY_POOL.forEach(q => { const div = document.createElement("div"); div.className = "ach-card"; // можна стилізувати як картку div.innerHTML = getQuestText(q); container.appendChild(div); }); }
-function renderQuests(){ let html = p.daily.quests.map((q,i)=>{ return <div class="item-row"> <div> <b>${q.n}</b><br> <small>${q.progress}/${q.target}</small> </div>
+   function showQuests() {
+    const container = document.getElementById("quest-list");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    DAILY_POOL.forEach(q => {
+        const div = document.createElement("div");
+        div.className = "ach-card";
+        div.innerHTML = getQuestText(q);
+        container.appendChild(div);
+    });
+}
+function renderQuests(){
+    let html = p.daily.quests.map((q,i)=>{
+        return `
+<div class="item-row">
+    <div>
+        <b>${q.n}</b><br>
+        <small>${q.progress}/${q.target}</small>
+    </div>
 
     ${
         q.done && !q.claimed
@@ -739,19 +758,20 @@ function renderQuests(){ let html = p.daily.quests.map((q,i)=>{ return <div clas
     }
 </div>
 `;
-
     }).join('');
 
-    document.getElementById("quest-list").innerHTML = html || "Немає завдань";
+    document.getElementById("quest-list").innerHTML =
+        html || "Немає завдань";
 }
+
   function switchShop(cat, e) {
 
     // підсвітка вкладки
-    if(e){
-        e.parentElement.querySelectorAll('.tab')
-            .forEach(t => t.classList.remove('active-tab'));
-        e.classList.add('active-tab');
-    }
+    if(e && e.parentElement){
+    e.parentElement.querySelectorAll('.tab')
+        .forEach(t => t.classList.remove('active-tab'));
+    e.classList.add('active-tab');
+}
 
     let html = GEAR_DATA[cat].map((it, i) => {
 
@@ -1202,30 +1222,28 @@ function closePopup() {
    function resetGame() {
     state = 'idle';
     pullActive = false;
-
-    document.getElementById('bobber').style.display = 'none';
-    document.getElementById('fight-ui').style.display = 'none';
-    document.getElementById('rod-visual').style.display = 'none';
-
-    document.getElementById('s-reel').pause();
-
-    progress = 0;
     tension = 0;
+    progress = 0;
+
+    document.getElementById('fight-ui').style.display = 'none';
+    document.getElementById('bobber').style.display = 'none';
+    document.getElementById('rod-visual').style.display = 'none';
 }
     
   function renderAchs(){
 
-document.getElementById('ach-container').innerHTML =
-ACHS.map(a =>
+    const container = document.getElementById('ach-container');
+    if(!container || !Array.isArray(ACHS)) return;
 
-`<div class="ach-card ${p.unlockedAchs.includes(a.id)?'ach-unlocked':''}">
-<b>${a.n}</b><br>
-${a.d}<br>
-💰 Нагорода: ${a.r}₴
-</div>`
+    const unlocked = p?.unlockedAchs || [];
 
-).join('');
-
+    container.innerHTML = ACHS.map(a => `
+        <div class="ach-card ${unlocked.includes(a.id) ? 'ach-unlocked' : ''}">
+            <b>${a.n}</b><br>
+            ${a.d}<br>
+            💰 Нагорода: ${a.r}₴
+        </div>
+    `).join('');
 }
     function checkAchs(){
 
@@ -1306,6 +1324,12 @@ updateUI();
         if(q.progress >= q.target){
             q.done = true;
         }
+       if(q.type === "loc"){
+        q.progress++;
+    }
+    if(q.progress >= q.target){
+        q.done = true;
+    }
 
     });
 
