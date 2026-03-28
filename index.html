@@ -727,26 +727,8 @@ function showScreen(id){
     if(id === 'locs') renderLocs();
     if(id === 'quests') renderQuests();
 }
-    function showQuests() {
-    const container = document.getElementById("quest-list");
-    container.innerHTML = "";
-    DAILY_POOL.forEach(q => {
-        const div = document.createElement("div");
-        div.className = "ach-card"; // можна стилізувати як картку
-        div.innerHTML = getQuestText(q);
-        container.appendChild(div);
-    });
-}
-function renderQuests(){
-
-    let html = p.daily.quests.map((q,i)=>{
-
-        return `
-<div class="item-row">
-    <div>
-        <b>${q.n}</b><br>
-        <small>${q.progress}/${q.target}</small>
-    </div>
+    function showQuests() { const container = document.getElementById("quest-list"); container.innerHTML = ""; DAILY_POOL.forEach(q => { const div = document.createElement("div"); div.className = "ach-card"; // можна стилізувати як картку div.innerHTML = getQuestText(q); container.appendChild(div); }); }
+function renderQuests(){ let html = p.daily.quests.map((q,i)=>{ return <div class="item-row"> <div> <b>${q.n}</b><br> <small>${q.progress}/${q.target}</small> </div>
 
     ${
         q.done && !q.claimed
