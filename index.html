@@ -1128,9 +1128,12 @@ function catchFish() {
     addXP(xpGain);
 
     showPopup(`
-    <img src="${fishData.img}" style="width:120px"><br>
-    🐟 ${fishData.n} (${weight} кг)<br>
-    +${xpGain} XP
+    <div style="text-align:center">
+        <img src="${fishData.img}" style="width:160px"><br>
+        <b>🐟 ${fishData.n}</b><br>
+        Вага: ${weight} кг<br>
+        +${xpGain} XP
+    </div>
 `);
     resetGame();
     p.daily.quests.forEach(q=>{
@@ -1235,7 +1238,7 @@ function showPopup(text) {
     const popupText = document.getElementById('popup-text');
 
     popup.style.display = 'block';
-    popupText.innerText = text;
+    popupText.innerHTML = text;
     popup.classList.add('show');
 }
 function closePopup() {
@@ -1366,27 +1369,31 @@ updateUI();
     renderInv();
     updateUI();
 }
-  function renderInv(){
+function renderInv(){
 
     let html = p.inv.map((f) => {
 
         return `
-        <div class="item-row">
-            <div style="display:flex; align-items:center; gap:10px;">
-                <img src="${f.img}" style="
-                    width:60px;
-                    height:40px;
-                    object-fit:contain;
-                    border-radius:6px;
-                    background:#0003;
-                ">
-                <span>${f.n} (${f.w} кг)</span>
-            </div>
+        <div style="
+            width:140px;
+            text-align:center;
+            background:#0002;
+            border-radius:10px;
+            padding:5px;
+        ">
+            <img src="${f.img}" style="
+                width:120px;
+                height:80px;
+                object-fit:contain;
+            ">
+            <div><b>${f.n}</b></div>
+            <div>${f.w} кг</div>
         </div>
         `;
     }).join('');
 
-    document.getElementById('fish-list').innerHTML = html || "Садок порожній";
+    document.getElementById('fish-list').innerHTML =
+        `<div style="display:flex; flex-wrap:wrap; gap:10px;">${html}</div>`;
 }
     function exitGame() { resetGame(); showScreen('menu'); }
 
