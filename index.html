@@ -221,7 +221,6 @@ border-top: none;
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
     <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
-    
     <div style="margin-top:15px;">
     <img src="Gerb.png" 
          onclick="showGerbInfo()" 
@@ -233,7 +232,6 @@ border-top: none;
             cursor:pointer;
          ">
 </div>
-    
 </div> <div id="backpack" class="screen">
     <h3>🎒 ТВІЙ РЮКЗАК</h3>
     
@@ -345,7 +343,7 @@ border-top: none;
     <div id="fish-list" style="text-align: left; padding: 10px;"></div>
     <button class="btn" onclick="goBack()">НАЗАД</button>
 </div>
-<div id="game-popup">
+<div id="game-popup" onclick="event.stopPropagation()">
     <div id="popup-text"></div>
     <button onclick="closePopup()">OK</button>
 </div>
@@ -1042,15 +1040,6 @@ function selectBait(name){
 
     }, 2000 + Math.random() * 3000);
 }
-    function showGerbInfo() {
-    showPopup(
-        "Риботи́н — село в Україні, у Новгород-Сіверського району Чернігівської області. " +
-        "Розташований за 2 км від р. Десна.\n\n" +
-        "Символіка:\n" +
-        "На гербі зображена риба (сом) і тин, що вказує на назву села (герб є подвійно промовистим). " +
-        "Сом вказує на рибні місця і річку Десна."
-    );
-}
 
     function startPull() { pullActive = true; }
     function stopPull() { pullActive = false; document.getElementById('s-reel').pause(); }
@@ -1169,7 +1158,15 @@ function addXP(amount){
 
     updateUI();
 }
-    
+    function showGerbInfo() {
+    showPopup(
+        "Риботи́н — село в Україні, у Новгород-Сіверського району Чернігівської області. " +
+        "Розташований за 2 км від р. Десна.\n\n" +
+        "Символіка:\n" +
+        "На гербі зображена риба (сом) і тин, що вказує на назву села (герб є подвійно промовистим). " +
+        "Сом вказує на рибні місця і річку Десна."
+    );
+}
     function updateDayNight(){
 
 let overlay = document.getElementById("day-overlay");
