@@ -7,14 +7,13 @@
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
 body {
-            margin: 0;
-            font-family: 'Montserrat', sans-serif;
-            background: #000; /* Фон під картинками */
-            color: white;
-            user-select: none;
-            overflow: hidden;
-            touch-action: none;
-        }
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background: #000;
+    color: white;
+    user-select: none;
+    overflow: hidden; /* Залишаємо, щоб не скролилася вся сторінка, а тільки меню */
+}
         
        .stats {
             background: linear-gradient(180deg, rgba(62,39,35,0.95) 0%, rgba(30,15,10,0.95) 100%);
@@ -47,18 +46,18 @@ body {
         #h-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); width: 100%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
 .screen {
-            display: none;
-            padding: 20px 15px;
-            text-align: center;
-            height: 100vh;
-            overflow-y: auto;
-            background: var(--glass);
-            backdrop-filter: blur(10px); /* Сильніше розмиття фону */
-            -webkit-backdrop-filter: blur(10px);
-            box-sizing: border-box;
-            border-top: 2px solid rgba(255, 204, 128, 0.2);
-        }
-
+    display: none;
+    padding: 15px 15px 40px 15px; /* Додано 40px знизу, щоб кнопка Назад точно не прилипала */
+    text-align: center;
+    height: calc(100dvh - 75px); /* Віднімаємо приблизну висоту панелі статів */
+    overflow-y: auto; /* Дозволяємо прокрутку всередині меню */
+    -webkit-overflow-scrolling: touch; /* Плавний скрол на смартфонах */
+    box-sizing: border-box;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 2px solid rgba(255, 204, 128, 0.2);
+}
 #menu {
     position: relative;
     background: url('Десна.jpg') center/cover no-repeat;
@@ -84,9 +83,42 @@ body {
             animation: fadeIn 0.3s ease-out; /* Анімація появи */
         }
 
-        .btn { background: #4e342e; color: white; border: 1.5px solid var(--gold); padding: 10px; margin: 4px auto; width: 95%; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-        .btn-small { width: auto; padding: 5px 10px; font-size: 0.7em; background: #5d4037; border: 1px solid var(--gold); color: white; border-radius: 3px; }
-        .btn:disabled { background: #222; color: #666; border-color: #444; }
+        .btn { 
+    background: linear-gradient(145deg, #4e342e, #3e2723); 
+    color: white; 
+    border: 1px solid rgba(255, 204, 128, 0.4); 
+    padding: 12px; /* Зменшив з 14px */
+    margin: 6px auto; /* Зменшив з 8px */
+    width: 100%; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-size: 0.9em; 
+    font-weight: 600; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+      .btn-small { 
+        width: auto; 
+        padding: 5px 10px; 
+        font-size: 0.75em; 
+        background: #5d4037; 
+        border: 1px solid var(--gold); 
+        color: white; 
+        border-radius: 4px; 
+    }
+        .btn:disabled { 
+        background: #222 !important; 
+        color: #666 !important; 
+        border-color: #444 !important; 
+        box-shadow: none;
+        transform: none;
+    }
 
         #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
      
