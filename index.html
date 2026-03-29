@@ -195,9 +195,20 @@ border-color:var(--gold);
 box-shadow:0 0 8px rgba(255,204,128,0.6);
 }
 
+.item-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
 
-.item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.8em; text-align: left; }
+padding:8px 4px;
+border-bottom:1px solid rgba(255,255,255,0.05);
 
+font-size:0.8em;
+text-align:left;
+
+color:#ffffff;
+text-shadow:0 0 3px rgba(0,0,0,0.8);
+}
 .ach-card{
 background:rgba(40,25,20,0.7);
 border:1px solid #5d4037;
@@ -507,75 +518,75 @@ border-top: none;
     ],
 
     baits: [
-    {n: "Хліб", p: 20, target: ["Плітка","Краснопірка","Верховодка","Густера"], size: [0.1, 1.0]},
+    {n: "Хліб", p: 20, img:"Items/hlib.png", target: ["Плітка","Краснопірка","Верховодка","Густера"], size: [0.1, 1.0]},
     
-    {n: "Черв'як", p: 50, target: [
+    {n: "Черв'як", p: 50, img:"Items/chervyak.png", target: [
         "Окунь","Срібний карась","Карась","Линь","Линок",
         "Плітка","Йорж","Густера","Лящ","Судак"
     ], size: [0.2, 3.5]},
     
-    {n: "Опариш", p: 70, target: [
+    {n: "Опариш", p: 70, img:"Items/oparish.png", target: [
         "Плітка","Густера","Чехоня","Верховодка","Лящ","Краснопірка"
     ], size: [0.1, 4.0]},
     
-    {n: "Тісто", p: 80, target: [
+    {n: "Тісто", p: 80, img:"Items/tisto.png", target: [
         "Лящ","Плітка","Карась","Густера","Краснопірка","Линь"
     ], size: [0.3, 4.5]},
     
-    {n: "Перловка", p: 90, target: [
+    {n: "Перловка", p: 90, img:"Items/perlovka.png", target: [
         "Лящ","Плітка","Густера","Карась"
     ], size: [0.5, 5]},
     
-    {n: "Кукурудза", p: 150, target: [
+    {n: "Кукурудза", p: 150, img:"Items/kukurudza.png", target: [
         "Короп","Білий амур","Сазан","Лящ","Карась"
     ], size: [2, 20]},
     
-    {n: "Живець", p: 300, target: [
+    {n: "Живець", p: 300, img:"Items/zhivets.png", target: [
         "Щука","Судак","Сом","Жерех","Головень"
     ], size: [3, 80]}
 ],
 
     rods: [
-        {n: "Bamboo Stick", p: 200, m: 2},
-        {n: "River Star", p: 1500, m: 10},
-        {n: "Carbon Pro", p: 5000, m: 30},
-        {n: "Titan Deep", p: 18000, m: 120},
-        {n: "Ultimate Desna", p: 60000, m: 300}
-    ],
+ {n:"Bamboo Stick", p:200, m:2, img:"Items/bamboo.png"},
+ {n:"River Star", p:1500, m:10, img:"Items/riverstar.png"},
+ {n:"Carbon Pro", p:5000, m:30, img:"Items/carbon.png"},
+ {n:"Titan Deep", p:18000, m:120, img:"Items/titan.png"},
+ {n:"Ultimate Desna", p:60000, m:300, img:"Items/desnаa.png"}
+],
 
-    reels: [
-        {n: "Old Wheel", p: 150, m: 1.2},
-        {n: "Spark 100", p: 1200, m: 3},
-        {n: "Sea Master", p: 5000, m: 5},
-        {n: "Turbo Reel", p: 15000, m: 20},
-        {n: "Quantum X", p: 40000, m: 50}
-    ],
+reels: [
+ {n:"Old Wheel", p:150, m:1.2, img:"Items/reel1.jpeg"},
+ {n:"Spark 100", p:1200, m:3, img:"Items/reel2.jpg"},
+ {n:"Sea Master", p:5000, m:5, img:"Items/reel3.jpg"},
+ {n:"Turbo Reel", p:15000, m:20, img:"Items/reel4.jpg"},
+ {n:"Quantum X", p:40000, m:50, img:"Items/reel5.jpg"}
+],
 
-    lines: [
-        {n: "Mono 2kg", p: 50, m: 2},
-        {n: "Mono 10kg", p: 500, m: 10},
-        {n: "Braid 35kg", p: 1500, m: 30},
-        {n: "Heavy Line", p: 6000, m: 100},
-        {n: "Steel Wire", p: 20000, m: 300}
-    ],
+lines: [
+ {n:"Mono 2kg", p:50, m:2, img:"Items/line1.jpg"},
+ {n:"Mono 10kg", p:500, m:10, img:"Items/line2.jpg"},
+ {n:"Braid 35kg", p:1500, m:30, img:"Items/line3.jpg"},
+ {n:"Heavy Line", p:6000, m:100, img:"Items/line4.jpg"},
+ {n:"Steel Wire", p:20000, m:300, img:"Items/line5.jpg"}
+]
 
     food: [
-        {n:"🥖 Хліб", p:30, h:20, xp:0},
-        {n:"🥓 Сало", p:120, h:60, xp:5},
-        {n:"🍲 Борщ", p:180, h:70, xp:10},
-        {n:"🥔 Картопля", p:60, h:25, xp:0},
-        {n:"🍗 Курка", p:220, h:80, xp:20},
-        {n:"🍖 Шашлик", p:300, h:90, xp:30},
-        {n:"🧀 Сир", p:140, h:40, xp:5},
-        {n:"🍞 Бутерброд", p:100, h:35, xp:5}
+        {n:"Хліб", p:30, h:20, xp:0, img:"Items/food_hlib.png"},
+        {n:"Сало", p:120, h:60, xp:5, img:"Items/salo.png"},
+        {n:"Борщ", p:180, h:70, xp:10, img:"Items/borsh.png"},
+        {n:"Картопля", p:60, h:25, xp:0, img:"Items/kartoplya.png"},
+        {n:"Курка", p:220, h:80, xp:20, img:"Items/kurka.png"},
+        {n:"Шашлик", p:300, h:90, xp:30, img:"Items/shashlik.png"},
+        {n:"Сир", p:140, h:40, xp:5, img:"Items/sir.png"},
+        {n:"Бутерброд", p:100, h:35, xp:5, img:"Items/buterbrod.png"}
     ],
 
     alcohol: [
-        {n:"🥃 Горілка", p:250, h:-15, xp:80},
-        {n:"🍺 Пиво", p:120, h:5, xp:40},
-        {n:"🍷 Вино", p:300, h:5, xp:100},
-        {n:"🥃 Самогон", p:180, h:-20, xp:200},
-        {n:"🍸 Коньяк", p:600, h:-30, xp:250}
+        {n:"Горілка", p:250, h:-15, xp:80, img:"Items/gorilka.png"},
+        {n:"Пиво", p:120, h:5, xp:40, img:"Items/beer.png"},
+        {n:"Вино", p:300, h:5, xp:100, img:"Items/wine.png"},
+        {n:"Самогон", p:180, h:-20, xp:200, img:"Items/samogon.png"},
+        {n:"Коньяк", p:600, h:-30, xp:250, img:"Items/cognac.png"}
     ]
 };
 const ACHS = [
@@ -887,30 +898,44 @@ function renderQuests(){
 
     // підсвітка вкладки
     if(e && e.parentElement){
-    e.parentElement.querySelectorAll('.tab')
-        .forEach(t => t.classList.remove('active-tab'));
-    e.classList.add('active-tab');
-}
+        e.parentElement.querySelectorAll('.tab')
+            .forEach(t => t.classList.remove('active-tab'));
+        e.classList.add('active-tab');
+    }
 
     let html = GEAR_DATA[cat].map((it, i) => {
 
         let alreadyOwned = false;
 
-if(['rods','reels','lines'].includes(cat)){
-    alreadyOwned = (p.ownedGear[cat] || []).includes(i);
-}
+        if(['rods','reels','lines'].includes(cat)){
+            alreadyOwned = (p.ownedGear[cat] || []).includes(i);
+        }
 
         return `
-<div class="item-row">
-    <div>
-        <b>${it.n}</b><br>
-        <small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small>
-    </div>
-    <button onclick="buy('${cat}', ${i})"
-        ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
-        ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
-    </button>
-</div>`;
+        <div class="item-row">
+            <div style="display:flex; align-items:center; gap:10px;">
+                
+                <img src="${it.img}" style="
+                    width:60px;
+                    height:60px;
+                    object-fit:contain;
+                    background:#111;
+                    border:1px solid #444;
+                    border-radius:6px;
+                    padding:3px;
+                ">
+
+                <div>
+                    <b>${it.n}</b><br>
+                    <small>${it.p}₴ ${it.m ? `(${it.m}кг)` : ''}</small>
+                </div>
+            </div>
+
+            <button onclick="buy('${cat}', ${i})"
+                ${p.rank < (it.r||1) || alreadyOwned ? 'disabled' : ''}>
+                ${alreadyOwned ? 'КУПЛЕНО' : 'КУПИТИ'}
+            </button>
+        </div>`;
     }).join('');
 
     if(cat === 'food' || cat === 'alcohol'){
@@ -942,28 +967,55 @@ function generateDailyQuests(){
     localStorage.setItem('desna_backpack_v5', JSON.stringify(p));
 }
     function buy(cat, i) {
+
     let it = GEAR_DATA[cat][i];
 
     if(p.money < it.p) return showPopup("Мало грошей!");
 
     p.money -= it.p;
     document.getElementById('my-sound').play();
+
+    // 🪱 НАЖИВКИ
     if(cat === 'baits'){
-    p.baits[it.n] = (p.baits[it.n] || 0) + 10;
 
-    if(!p.selBait){
-        p.selBait = it.n;
+        p.baits[it.n] = (p.baits[it.n] || 0) + 10;
+
+        if(!p.selBait){
+            p.selBait = it.n;
+        }
+
+        showPopup(`
+        <div style="text-align:center">
+            <img src="${it.img}" style="width:120px"><br>
+            Придбано 10 шт.<br><b>${it.n}</b>
+        </div>
+        `);
     }
 
-    showPopup(`Придбано 10 шт. наживки: ${it.n}`);
-}
+    // 🍖 ЇЖА
     else if(cat === 'food' || cat === 'alcohol'){
+
         p.food[it.n] = (p.food[it.n] || 0) + 1;
-        showPopup(`У рюкзак додано: ${it.n}`);
+
+        showPopup(`
+        <div style="text-align:center">
+            <img src="${it.img}" style="width:120px"><br>
+            Додано в рюкзак:<br><b>${it.n}</b>
+        </div>
+        `);
     }
+
+    // 🎣 СНАСТІ
     else{
+
         p.ownedGear[cat].push(i);
-        showPopup(`Снасть ${it.n} додана в арсенал!`);
+
+        showPopup(`
+        <div style="text-align:center">
+            <img src="${it.img}" style="width:120px"><br>
+            Нова снасть:<br><b>${it.n}</b>
+        </div>
+        `);
     }
 
     updateUI();
@@ -972,42 +1024,49 @@ function generateDailyQuests(){
 function goBack(){
     showScreen(lastScreen);
 }
-    function renderBackpack() {
-
-    // Наживки
     let baitHtml = Object.keys(p.baits).map(name => {
 
-        let safeName = name.replace(/'/g, "\\'");
+    let it = GEAR_DATA.baits.find(b => b.n === name);
 
-        return `
+    return `
 <div class="item-row">
-    <span>${name} (${p.baits[name]} шт)</span>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+        <span>${name} (${p.baits[name]} шт)</span>
+    </div>
+
     <button class="btn-small"
-        onclick="selectBait('${safeName}')"
+        onclick="selectBait('${name}')"
         ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
         ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
     </button>
 </div>`;
-
-    }).join('') || 'Наживки немає';
+}).join('') || 'Наживки немає';
 
     document.getElementById('inv-baits').innerHTML = baitHtml;
 
 
     // Їжа
-    let foodHtml = Object.keys(p.food).map(name => {
+   let foodHtml = Object.keys(p.food).map(name => {
 
-        if(p.food[name] <= 0) return '';
+    if(p.food[name] <= 0) return '';
 
-        return `<div class="item-row">
+    let it =
+        GEAR_DATA.food.find(f => f.n === name) ||
+        GEAR_DATA.alcohol.find(a => a.n === name);
+
+    return `<div class="item-row">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
             <span>${name} (${p.food[name]} шт)</span>
-            <button class="btn-small"
-                onclick="useFood('${name}')">
-                З'ЇСТИ
-            </button>
-        </div>`;
+        </div>
 
-    }).join('') || 'Їжі немає';
+        <button class="btn-small"
+            onclick="useFood('${name}')">
+            З'ЇСТИ
+        </button>
+    </div>`;
+}).join('') || 'Їжі немає';
 
     document.getElementById('inv-food').innerHTML = foodHtml;
 
@@ -1021,27 +1080,28 @@ function goBack(){
             let isEquipped = p.gear[type.slice(0,-1)] === idx;
 
             return `<div class="item-row">
-                <span>${it.n} (${it.m}кг)</span>
-                <div>
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${it.img}" style="width:60px; height:60px; object-fit:contain;">
+        <span>${it.n} (${it.m}кг)</span>
+    </div>
 
-                <button class="btn-small"
-                    onclick="equipGear('${type}', ${idx})"
-                    ${isEquipped ? 'disabled' : ''}>
-                    ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
-                </button>
+    <div>
+        <button class="btn-small"
+            onclick="equipGear('${type}', ${idx})"
+            ${isEquipped ? 'disabled' : ''}>
+            ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
+        </button>
 
-                <button class="btn-small"
-                    onclick="sellGear('${type}', ${idx})"
-                    ${isEquipped ? 'disabled' : ''}>
-                    ПРОДАТИ
-                </button>
-
-                </div>
-            </div>`;
+        <button class="btn-small"
+            onclick="sellGear('${type}', ${idx})"
+            ${isEquipped ? 'disabled' : ''}>
+            ПРОДАТИ
+        </button>
+    </div>
+</div>`;
 
         }).join('');
 
-    }).join('');
 
     document.getElementById('inv-gear').innerHTML = gearHtml;
 }
