@@ -702,17 +702,41 @@ document.getElementById('xp-text').innerText = `${Math.floor(p.xp)} / ${req}`;
    let lastScreen = "menu";
 
 function showScreen(id){
+
+    // звук рюкзака
+    if(id === 'backpack'){
+        let a = document.getElementById('s-backpack');
+        if(a){
+            a.currentTime = 0;
+            a.play().catch(()=>{});
+        }
+    }
+
+    // звук дверей (магазини)
+    if(id === 'fishshop' || id === 'foodshop'){
+        let a = document.getElementById('s-door');
+        if(a){
+            a.currentTime = 0;
+            a.play().catch(()=>{});
+        }
+    }
+
     let current = document.querySelector('.screen.active'); 
     if(current && current.id !== id){ lastScreen = current.id; } 
-    document.querySelectorAll('.screen') .forEach(s => s.classList.remove('active')); 
+
+    document.querySelectorAll('.screen')
+        .forEach(s => s.classList.remove('active')); 
+
     document.getElementById(id).classList.add('active'); 
+
     if(id === 'fishshop') switchShop('baits', document.querySelector('#fishshop .tab')); 
     if(id === 'foodshop') switchShop('food', document.querySelector('#foodshop .tab')); 
     if(id === 'backpack') renderBackpack(); 
     if(id === 'achs') renderAchs(); 
     if(id === 'locs') renderLocs(); 
     if(id === 'inv') renderInv(); 
-    if(id === 'quests') renderQuests(); } 
+    if(id === 'quests') renderQuests(); 
+}
    
    function showQuests() {
     const container = document.getElementById("quest-list");
@@ -1158,12 +1182,12 @@ function addXP(amount){
 
     updateUI();
 }
-    function showGerbInfo() {
+function showGerbInfo() {
     showPopup(
         "Риботи́н — село в Україні, у Новгород-Сіверського району Чернігівської області. " +
         "Розташований за 2 км від р. Десна.\n\n" +
         "Символіка:\n" +
-        "На гербі зображена риба (сом) і тин, що вказує на назву села (герб є подвійно промовистим). " +
+        "На гербі зображена риба (сом) і тин, що вказує на назву села. " +
         "Сом вказує на рибні місця і річку Десна."
     );
 }
