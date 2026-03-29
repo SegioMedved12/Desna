@@ -214,9 +214,9 @@ border-top: none;
         🎣 Наживка: <span id="cur-bait-name">...</span> (<span id="cur-bait-count">0</span>)
     </div>
     <button class="btn" onclick="showScreen('locs')">➡️ НА ВОДУ</button>
-    <button class="btn" onclick="document.getElementById('s-backpack').play(); showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
-    <button class="btn" onclick="document.getElementById('s-door').play(); showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
-    <button class="btn" onclick="document.getElementById('s-door').play(); showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
+    <button class="btn" onclick="showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
+    <button class="btn" onclick="showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
+    <button class="btn" onclick="showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
     <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
     <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
     <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
@@ -715,11 +715,7 @@ function showScreen(id){
     if(id === 'locs') renderLocs(); 
     if(id === 'inv') renderInv(); 
     if(id === 'quests') renderQuests(); } 
-    function renderQuests(){
-        let html = p.daily.quests.map((q,i)=>{ 
-            return <div 
-                class="item-row"> 
-            <div> <b>${q.n}</b><br> <small>${q.progress}/${q.target}</small> </div> ${ q.done && !q.claimed ? <button onclick="claimQuest(${i})">ЗАБРАТИ</button> : q.claimed ? <button disabled>✔</button> : <button disabled>...</button> } </div> ; }).join(''); document.getElementById("quest-list").innerHTML = html || "Немає завдань"; }
+   
    function showQuests() {
     const container = document.getElementById("quest-list");
     if (!container) return;
