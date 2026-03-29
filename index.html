@@ -5,47 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Десна</title>
     <style>
-        :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
-body {
-    margin: 0;
-    font-family: 'Montserrat', sans-serif;
-    background: #000;
-    color: white;
-    user-select: none;
-    overflow: hidden;
-    touch-action: none;
+       :root{
+--wood:#3e2723;
+--gold:#ffcc80;
+--dark:#0e1a14;
+--neon:#39ff14;
+--danger:#ff4444;
+--glass: rgba(255,255,255,0.05);
+--blur: blur(10px);
+}
+body{
+margin:0;
+font-family:'Montserrat',sans-serif;
+background:#000;
+color:white;
+overflow:hidden;
+user-select:none;
+}     
+.stats{
+background:rgba(20,20,20,0.7);
+backdrop-filter:blur(12px);
+border-bottom:1px solid rgba(255,255,255,0.1);
+padding:8px 10px;
+
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:6px;
+
+font-size:0.75em;
+text-align:center;
+box-shadow:0 0 10px rgba(0,0,0,0.7);
+}
+.val{
+color:var(--gold);
+font-weight:bold;
+text-shadow:0 0 5px rgba(255,204,128,0.7);
 }
         
-       .stats {
-    background: var(--wood);
-    padding: 5px 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 5px;
-    border-bottom: 2px solid var(--gold);
-    font-size: 0.75em;
-    text-align: center;
+.bar-container{
+grid-column:span 3;
+display:flex;
+gap:10px;
+align-items:center;
+margin-top:5px;
 }
-        .val { color: var(--gold); font-weight: bold; }
-        .bar-container {
-    grid-column: span 3; /* щоб полоски були на всю ширину */
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 5px;
-}
-        .bar-bg { flex-grow: 1; background: #111; height: 10px; border-radius: 5px; border: 1px solid #555; overflow: hidden; }
-        #h-fill { height: 100%; background: #4caf50; width: 100%; transition: 0.3s; }
 
-.screen {
-    display: none;
-    padding: 10px;
-    text-align: center;
-    height: 90vh;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    box-sizing: border-box;
+.bar-bg{
+flex-grow:1;
+background:#111;
+height:10px;
+border-radius:6px;
+border:1px solid #333;
+overflow:hidden;
+}
+
+#h-fill{
+height:100%;
+background:linear-gradient(90deg,#00ff87,#60efff);
+transition:0.4s;
+}
+
+.screen{
+display:none;
+padding:10px;
+text-align:center;
+height:90vh;
+overflow-y:auto;
+
+background:rgba(0,0,0,0.45);
+backdrop-filter:blur(6px);
+box-sizing:border-box;
 }
 .item-row img{
     transition: 0.2s;
@@ -73,13 +102,49 @@ body {
     position: relative;
     z-index: 2;
 }
-        .active { display: block !important; }
+.active{
+display:block !important;
+}
 
-        .btn { background: #4e342e; color: white; border: 1.5px solid var(--gold); padding: 10px; margin: 4px auto; width: 95%; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
-        .btn-small { width: auto; padding: 5px 10px; font-size: 0.7em; background: #5d4037; border: 1px solid var(--gold); color: white; border-radius: 3px; }
-        .btn:disabled { background: #222; color: #666; border-color: #444; }
+.btn{
+background:linear-gradient(145deg,#4e342e,#2d1b17);
+color:white;
 
-        #game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
+border:1px solid rgba(255,204,128,0.4);
+
+padding:10px;
+margin:6px auto;
+width:95%;
+
+border-radius:8px;
+
+cursor:pointer;
+font-size:0.85em;
+font-weight:bold;
+text-transform:uppercase;
+
+transition:0.25s;
+box-shadow:
+0 0 10px rgba(0,0,0,0.6),
+inset 0 0 5px rgba(255,255,255,0.05);
+}
+.btn-small{
+width:auto;
+padding:5px 12px;
+font-size:0.7em;
+
+border-radius:6px;
+background:#2d1b17;
+border:1px solid rgba(255,204,128,0.5);
+}
+.btn:disabled{
+background:#222;
+color:#555;
+border-color:#333;
+box-shadow:none;
+}
+
+#game-view { height: 50vh; position: relative; background-size: cover; background-position: center; border-bottom: 3px solid var(--wood); overflow: hidden; background-color: #222; }
      
  #rod-visual{
     position:absolute;
@@ -102,13 +167,64 @@ body {
         #fight-ui { position: absolute; top: 30%; left: 50%; transform: translate(-50%, -50%); width: 85%; background: rgba(0,0,0,0.85); padding: 12px; border: 2px solid var(--gold); display: none; z-index: 100; border-radius: 8px; }
         .f-bar { background: #111; height: 14px; border-radius: 7px; border: 1px solid #555; margin: 2px 0 8px 0; overflow: hidden; }
         
-        .tabs { display: flex; overflow-x: auto; gap: 2px; margin-bottom: 10px; }
-        .tab { flex: 0 0 80px; padding: 8px; background: #333; font-size: 0.7em; cursor: pointer; border: 1px solid var(--gold); color: #fff; text-align: center; }
-        .tab.active-tab { background: var(--wood); font-weight: bold; color: var(--gold); }
+.tabs{
+display:flex;
+overflow-x:auto;
+gap:4px;
+margin-bottom:10px;
+}
 
-        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #333; font-size: 0.8em; text-align: left; }
-        .ach-card { background: #2d1b17; border: 1px solid #5d4037; padding: 10px; margin: 5px 0; border-radius: 4px; text-align: left; opacity: 0.4; }
-        .ach-unlocked { opacity: 1; border-color: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.tab{
+flex:0 0 90px;
+padding:8px;
+
+background:rgba(30,30,30,0.7);
+border:1px solid rgba(255,255,255,0.1);
+
+font-size:0.7em;
+cursor:pointer;
+
+border-radius:6px;
+transition:0.2s;
+}
+
+.tab.active-tab{
+background:var(--wood);
+color:var(--gold);
+border-color:var(--gold);
+box-shadow:0 0 8px rgba(255,204,128,0.6);
+}
+
+
+.item-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:8px 4px;
+border-bottom:1px solid rgba(255,255,255,0.05);
+
+font-size:0.8em;
+text-align:left;
+}
+.ach-card{
+background:rgba(40,25,20,0.7);
+border:1px solid #5d4037;
+padding:10px;
+margin:6px 0;
+
+border-radius:8px;
+text-align:left;
+opacity:0.4;
+
+transition:0.3s;
+}
+
+.ach-unlocked{
+opacity:1;
+border-color:var(--gold);
+box-shadow:0 0 12px rgba(255,204,128,0.6);
+}
         
         .inv-section { margin-bottom: 15px; border: 1px solid #444; border-radius: 5px; padding: 5px; background: #222; }
         .inv-title { font-size: 0.7em; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; border-bottom: 1px solid #444; display: block; }
@@ -382,7 +498,7 @@ border-top: none;
         {n: "Линь", min: 0.5, max: 3.0, p: 25, img: "Fish/lin.jpg"},
         {n: "Линок", min: 0.4, max: 2.8, p: 20, img: "Fish/lyn.jpg"},
         {n: "Щука", min: 1.0, max: 8.0, p: 50, img: "Fish/shuka.png"},
-        {n: "Окунь", min: 0.3, max: 1.5, p: 20, img: "Fish/okun.jpg"},
+        {n: "Окунь", min: 0.3, max: 1.5, p: 20, img: "Fish/okun.png"},
         {n: "Йорж", min: 0.2, max: 1.2, p: 15, img: "Fish/yor.png"},
         {n: "Краснопірка", min: 0.2, max: 1.0, p: 12, img: "Fish/kras.jpg"},
         {n: "Лящ", min: 0.5, max: 4.5, p: 30, img: "Fish/lyash.png"},
@@ -394,7 +510,7 @@ border-top: none;
         {n: "Судак", min: 1.0, max: 8.0, p: 70, img: "Fish/sudak.png"},
         {n: "Головень", min: 0.5, max: 4.0, p: 45, img: "Fish/Chub.png"},
         {n: "Жерех", min: 1.0, max: 6.0, p: 60, img: "Fish/zhereh.png"},
-        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "Fish/chehon.png"},
+        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "Fish/chehon.jpg"},
         {n: "Верховодка", min: 0.05, max: 0.5, p: 10, img: "Fish/verhovka.png"},
         {n: "Стерлядь", min: 2.0, max: 10.0, p: 150, img: "Fish/sterl.png"}
     ],
