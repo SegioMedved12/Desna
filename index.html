@@ -1021,17 +1021,22 @@ function generateDailyQuests(){
     updateUI();
     switchShop(cat);
 }
+
 function goBack(){
     showScreen(lastScreen);
 }
+
+function renderBackpack(){
+
+    // НАЖИВКИ
     let baitHtml = Object.keys(p.baits).map(name => {
 
-    let it = GEAR_DATA.baits.find(b => b.n === name);
+        let it = GEAR_DATA.baits.find(b => b.n === name);
 
-    return `
+        return `
 <div class="item-row">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+    <div style="display:flex; gap:10px;">
+        <img src="${it?.img}" style="width:50px;">
         <span>${name} (${p.baits[name]} шт)</span>
     </div>
 
@@ -1041,37 +1046,33 @@ function goBack(){
         ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
     </button>
 </div>`;
-}).join('') || 'Наживки немає';
+    }).join('') || 'Наживки немає';
 
     document.getElementById('inv-baits').innerHTML = baitHtml;
 
 
-    // Їжа
-   let foodHtml = Object.keys(p.food).map(name => {
+    // ЇЖА
+    let foodHtml = Object.keys(p.food).map(name => {
 
-    if(p.food[name] <= 0) return '';
+        if(p.food[name] <= 0) return '';
 
-    let it =
-        GEAR_DATA.food.find(f => f.n === name) ||
-        GEAR_DATA.alcohol.find(a => a.n === name);
+        let it =
+            GEAR_DATA.food.find(f => f.n === name) ||
+            GEAR_DATA.alcohol.find(a => a.n === name);
 
-    return `<div class="item-row">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-            <span>${name} (${p.food[name]} шт)</span>
-        </div>
-
-        <button class="btn-small"
-            onclick="useFood('${name}')">
-            З'ЇСТИ
-        </button>
-    </div>`;
-}).join('') || 'Їжі немає';
+        return `
+<div class="item-row">
+    <span>${name} (${p.food[name]} шт)</span>
+    <button class="btn-small" onclick="useFood('${name}')">
+        З'ЇСТИ
+    </button>
+</div>`;
+    }).join('') || 'Їжі немає';
 
     document.getElementById('inv-food').innerHTML = foodHtml;
 
 
-    // Снасті
+    // СНАСТІ
     let gearHtml = ['rods','reels','lines'].map(type => {
 
         return p.ownedGear[type].map(idx => {
@@ -1079,32 +1080,23 @@ function goBack(){
             let it = GEAR_DATA[type][idx];
             let isEquipped = p.gear[type.slice(0,-1)] === idx;
 
-            return `<div class="item-row">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${it.img}" style="width:60px; height:60px; object-fit:contain;">
-        <span>${it.n} (${it.m}кг)</span>
-    </div>
+            return `
+<div class="item-row">
+    <span>${it.n} (${it.m}кг)</span>
 
-    <div>
-        <button class="btn-small"
-            onclick="equipGear('${type}', ${idx})"
-            ${isEquipped ? 'disabled' : ''}>
-            ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
-        </button>
-
-        <button class="btn-small"
-            onclick="sellGear('${type}', ${idx})"
-            ${isEquipped ? 'disabled' : ''}>
-            ПРОДАТИ
-        </button>
-    </div>
+    <button class="btn-small"
+        onclick="equipGear('${type}', ${idx})"
+        ${isEquipped ? 'disabled' : ''}>
+        ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
+    </button>
 </div>`;
+        }).join('');
 
-        }).join('') 
-
+    }).join('');
 
     document.getElementById('inv-gear').innerHTML = gearHtml;
 }
+
 function sellGear(type, idx){
 
     let it = GEAR_DATA[type][idx];
