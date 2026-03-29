@@ -39,13 +39,16 @@ body {
 
 .screen {
     display: none;
-    padding: 10px;
+    padding: 15px 15px 40px 15px; /* Додано 40px знизу, щоб кнопка Назад точно не прилипала */
     text-align: center;
-    height: 90vh;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
+    height: calc(100dvh - 75px); /* Віднімаємо приблизну висоту панелі статів */
+    overflow-y: auto; /* Дозволяємо прокрутку всередині меню */
+    -webkit-overflow-scrolling: touch; /* Плавний скрол на смартфонах */
     box-sizing: border-box;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 2px solid rgba(255, 204, 128, 0.2);
 }
 .item-row img{
     transition: 0.2s;
@@ -376,27 +379,27 @@ border-top: none;
     
   const GEAR_DATA = {
     fish: [
-        {n: "Плітка", min: 0.1, max: 1.5, p: 10, img: "pl.png"},
-        {n: "Карась", min: 0.2, max: 2.0, p: 15, img: "karas.jpg"},
-        {n: "Срібний карась", min: 0.3, max: 2.5, p: 20, img: "karas1.png"},
-        {n: "Линь", min: 0.5, max: 3.0, p: 25, img: "lin.jpg"},
-        {n: "Линок", min: 0.4, max: 2.8, p: 20, img: "lyn.jpg"},
-        {n: "Щука", min: 1.0, max: 8.0, p: 50, img: "shuka.png"},
-        {n: "Окунь", min: 0.3, max: 1.5, p: 20, img: "okun.jpg"},
-        {n: "Йорж", min: 0.2, max: 1.2, p: 15, img: "yor.png"},
-        {n: "Краснопірка", min: 0.2, max: 1.0, p: 12, img: "kras.jpg"},
-        {n: "Лящ", min: 0.5, max: 4.5, p: 30, img: "lyash.png"},
-        {n: "Короп", min: 1.0, max: 12.0, p: 50, img: "korop.png"},
-        {n: "Білий амур", min: 2.0, max: 12.0, p: 60, img: "amur.png"},
-        {n: "Сазан", min: 3.0, max: 15.0, p: 70, img: "sazan.png"},
-        {n: "Сом", min: 5.0, max: 40.0, p: 100, img: "som.png"},
-        {n: "Густера", min: 0.3, max: 2.0, p: 18, img: "gustera.png"},
-        {n: "Судак", min: 1.0, max: 8.0, p: 70, img: "sudak.png"},
-        {n: "Головень", min: 0.5, max: 4.0, p: 45, img: "Chub.png"},
-        {n: "Жерех", min: 1.0, max: 6.0, p: 60, img: "zhereh.png"},
-        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "chehon.png"},
-        {n: "Верховодка", min: 0.05, max: 0.5, p: 10, img: "verhovka.png"},
-        {n: "Стерлядь", min: 2.0, max: 10.0, p: 150, img: "sterl.png"}
+        {n: "Плітка", min: 0.1, max: 1.5, p: 10, img: "Fish/pl.png"},
+        {n: "Карась", min: 0.2, max: 2.0, p: 15, img: "Fish/karas.jpg"},
+        {n: "Срібний карась", min: 0.3, max: 2.5, p: 20, img: "Fish/karas1.png"},
+        {n: "Линь", min: 0.5, max: 3.0, p: 25, img: "Fish/lin.jpg"},
+        {n: "Линок", min: 0.4, max: 2.8, p: 20, img: "Fish/lyn.jpg"},
+        {n: "Щука", min: 1.0, max: 8.0, p: 50, img: "Fish/shuka.png"},
+        {n: "Окунь", min: 0.3, max: 1.5, p: 20, img: "Fish/okun.jpg"},
+        {n: "Йорж", min: 0.2, max: 1.2, p: 15, img: "Fish/yor.png"},
+        {n: "Краснопірка", min: 0.2, max: 1.0, p: 12, img: "Fish/kras.jpg"},
+        {n: "Лящ", min: 0.5, max: 4.5, p: 30, img: "Fish/lyash.png"},
+        {n: "Короп", min: 1.0, max: 12.0, p: 50, img: "Fish/korop.png"},
+        {n: "Білий амур", min: 2.0, max: 12.0, p: 60, img: "Fish/amur.png"},
+        {n: "Сазан", min: 3.0, max: 15.0, p: 70, img: "Fish/sazan.png"},
+        {n: "Сом", min: 5.0, max: 40.0, p: 100, img: "Fish/som.png"},
+        {n: "Густера", min: 0.3, max: 2.0, p: 18, img: "Fish/gustera.png"},
+        {n: "Судак", min: 1.0, max: 8.0, p: 70, img: "Fish/sudak.png"},
+        {n: "Головень", min: 0.5, max: 4.0, p: 45, img: "Fish/Chub.png"},
+        {n: "Жерех", min: 1.0, max: 6.0, p: 60, img: "Fish/zhereh.png"},
+        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "Fish/chehon.png"},
+        {n: "Верховодка", min: 0.05, max: 0.5, p: 10, img: "Fish/verhovka.png"},
+        {n: "Стерлядь", min: 2.0, max: 10.0, p: 150, img: "Fish/sterl.png"}
     ],
 
     baits: [
