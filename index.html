@@ -39,16 +39,13 @@ body {
 
 .screen {
     display: none;
-    padding: 15px 15px 40px 15px; /* Додано 40px знизу, щоб кнопка Назад точно не прилипала */
+    padding: 10px;
     text-align: center;
-    height: calc(100dvh - 75px); /* Віднімаємо приблизну висоту панелі статів */
-    overflow-y: auto; /* Дозволяємо прокрутку всередині меню */
-    -webkit-overflow-scrolling: touch; /* Плавний скрол на смартфонах */
+    height: 90vh;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(3px);
     box-sizing: border-box;
-    background: var(--glass);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-top: 2px solid rgba(255, 204, 128, 0.2);
 }
 .item-row img{
     transition: 0.2s;
