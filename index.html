@@ -7,46 +7,57 @@
     <style>
         :root { --wood: #3e2723; --gold: #ffcc80; --dark: #0e1a14; --neon: #39ff14; --danger: #ff4444; }
 body {
-    margin: 0;
-    font-family: 'Tahoma', sans-serif;
-    background: #0e1a14;
-    color: white;
-    user-select: none;
-    overflow: hidden;
-    touch-action: none;
-}
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #000; /* Фон під картинками */
+            color: white;
+            user-select: none;
+            overflow: hidden;
+            touch-action: none;
+        }
         
        .stats {
-    background: var(--wood);
-    padding: 5px 10px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 5px;
-    border-bottom: 2px solid var(--gold);
-    font-size: 0.75em;
-    text-align: center;
-}
+            background: linear-gradient(180deg, rgba(62,39,35,0.95) 0%, rgba(30,15,10,0.95) 100%);
+            padding: 10px 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            border-bottom: 2px solid var(--gold);
+            font-size: 0.85em;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 100;
+            position: relative;
+        }
         .val { color: var(--gold); font-weight: bold; }
         .bar-container {
-    grid-column: span 3; /* щоб полоски були на всю ширину */
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-top: 5px;
-}
-        .bar-bg { flex-grow: 1; background: #111; height: 10px; border-radius: 5px; border: 1px solid #555; overflow: hidden; }
-        #h-fill { height: 100%; background: #4caf50; width: 100%; transition: 0.3s; }
+            grid-column: span 3;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 8px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+        .bar-bg { 
+            flex-grow: 1; background: rgba(0,0,0,0.6); height: 12px; border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1); overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        #h-fill { height: 100%; background: linear-gradient(90deg, #4caf50, #81c784); width: 100%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
 .screen {
-    display: none;
-    padding: 10px;
-    text-align: center;
-    height: 90vh;
-    overflow-y: auto;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(3px);
-    box-sizing: border-box;
-}
+            display: none;
+            padding: 20px 15px;
+            text-align: center;
+            height: 100vh;
+            overflow-y: auto;
+            background: var(--glass);
+            backdrop-filter: blur(10px); /* Сильніше розмиття фону */
+            -webkit-backdrop-filter: blur(10px);
+            box-sizing: border-box;
+            border-top: 2px solid rgba(255, 204, 128, 0.2);
+        }
 
 #menu {
     position: relative;
@@ -68,7 +79,10 @@ body {
     position: relative;
     z-index: 2;
 }
-        .active { display: block !important; }
+ .active { 
+            display: block !important; 
+            animation: fadeIn 0.3s ease-out; /* Анімація появи */
+        }
 
         .btn { background: #4e342e; color: white; border: 1.5px solid var(--gold); padding: 10px; margin: 4px auto; width: 95%; border-radius: 4px; cursor: pointer; font-size: 0.85em; font-weight: bold; text-transform: uppercase; }
         .btn-small { width: auto; padding: 5px 10px; font-size: 0.7em; background: #5d4037; border: 1px solid var(--gold); color: white; border-radius: 3px; }
@@ -166,12 +180,7 @@ height:45%;   /* висота води */
 background:rgba(0,80,150,0.15);
 border-top: none;
 }
-#xp-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-    width: 0%;
-    transition: 0.3s;
-}
+#xp-fill { height: 100%; background: linear-gradient(90deg, #00c6ff, #0072ff); width: 0%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
 </head>
 <body>
@@ -213,14 +222,14 @@ border-top: none;
     <div style="margin-bottom: 10px; font-size: 0.85em; color: var(--neon); background: #000; padding: 5px; border: 1px solid #333;">
         🎣 Наживка: <span id="cur-bait-name">...</span> (<span id="cur-bait-count">0</span>)
     </div>
-    <button class="btn" onclick="showScreen('locs')">➡️ НА ВОДУ</button>
-    <button class="btn" onclick="showScreen('backpack')">🎒 РЮКЗАК (ІНВЕНТАР)</button>
-    <button class="btn" onclick="showScreen('fishshop')">🎣 РИБАЛЬСЬКИЙ МАГАЗИН</button>
-    <button class="btn" onclick="showScreen('foodshop')">🍖 ПРОДУКТОВИЙ МАГАЗИН</button>
-    <button class="btn" onclick="showScreen('inv')">🧺 САДОК (УЛОВ)</button>
-    <button class="btn" onclick="showScreen('achs')">🏆 ДОСЯГНЕННЯ</button>
-    <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
-    <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
+<button class="btn" onclick="showScreen('locs')"><i class="fa-solid fa-water"></i> На воду</button>
+<button class="btn" onclick="showScreen('backpack')"><i class="fa-solid fa-backpack"></i> Рюкзак</button>
+<button class="btn" onclick="showScreen('fishshop')"><i class="fa-solid fa-store"></i> Рибальський магазин</button>
+<button class="btn" onclick="showScreen('foodshop')"><i class="fa-solid fa-burger"></i> Продукти</button>
+<button class="btn" onclick="showScreen('inv')"><i class="fa-solid fa-bucket"></i> Садок</button>
+<button class="btn" onclick="showScreen('achs')"><i class="fa-solid fa-trophy"></i> Досягнення</button>
+<button class="btn" onclick="showScreen('quests')"><i class="fa-solid fa-list-check"></i> Завдання</button>
+<button class="btn btn-success" onclick="sellFish()"><i class="fa-solid fa-scale-balanced"></i> Продати улов</button>
     <div style="margin-top:15px;">
     <img src="Gerb.png" 
          onclick="showGerbInfo()" 
