@@ -222,16 +222,15 @@ border-top: none;
     <button class="btn" onclick="showScreen('quests')">📋 ЗАВДАННЯ</button>
     <button class="btn" onclick="sellFish()" style="background: #2e7d32; border-color: #81c784;">⚖️ ПРОДАТИ УЛОВ</button>
     <div style="margin-top:15px;">
-    <img src="Gerb.png" 
-onclick="showPopup('Риботи́н — село в Україні, у  Новгород-Сіверського району Чернігівської області. Розташований за 2 км від р. Десна. Символіка:
-На гербі зображена риба (сом) і тин що вказує на назву села (герб є подвійно промовистим). Сом вказує на рибні місця і річку Десна.')"
-style="
-    width:90px;
-    border:2px solid #ffcc80;
-    border-radius:10px;
-    box-shadow:0 0 10px #ffcc80;
-    cursor:pointer;
-">
+    <div style="margin-top:15px;">
+    <img src="Gerb.png" onclick="showGerbInfo()" 
+    style="
+        width:90px;
+        border:2px solid #ffcc80;
+        border-radius:10px;
+        box-shadow:0 0 10px #ffcc80;
+        cursor:pointer;
+    ">
 </div>
     
 </div> <div id="backpack" class="screen">
@@ -345,7 +344,7 @@ style="
     <div id="fish-list" style="text-align: left; padding: 10px;"></div>
     <button class="btn" onclick="goBack()">НАЗАД</button>
 </div>
-<div id="game-popup" onclick="event.stopPropagation()">
+<div id="game-popup">
     <div id="popup-text"></div>
     <button onclick="closePopup()">OK</button>
 </div>
@@ -1041,6 +1040,15 @@ function selectBait(name){
         }
 
     }, 2000 + Math.random() * 3000);
+}
+    function showGerbInfo(){
+    showPopup(
+        "Риботи́н — село в Україні, у Новгород-Сіверського району Чернігівської області. " +
+        "Розташований за 2 км від р. Десна.\n\n" +
+        "Символіка:\n" +
+        "На гербі зображена риба (сом) і тин що вказує на назву села (герб є подвійно промовистим). " +
+        "Сом вказує на рибні місця і річку Десна."
+    );
 }
 
     function startPull() { pullActive = true; }
