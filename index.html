@@ -518,7 +518,7 @@ border-top: none;
   const GEAR_DATA = {
     fish: [
         {n: "Плітка", min: 0.1, max: 1.5, p: 10, img: "Fish/pl.png"},
-        {n: "Карась", min: 0.2, max: 2.0, p: 15, img: "Fish/karas.jpg"},
+        {n: "Карась", min: 0.2, max: 2.0, p: 15, img: "Fish/karas.png"},
         {n: "Срібний карась", min: 0.3, max: 2.5, p: 20, img: "Fish/karas1.png"},
         {n: "Линь", min: 0.5, max: 3.0, p: 25, img: "Fish/lin.jpg"},
         {n: "Линок", min: 0.4, max: 2.8, p: 20, img: "Fish/lyn.jpg"},
@@ -535,7 +535,7 @@ border-top: none;
         {n: "Судак", min: 1.0, max: 8.0, p: 70, img: "Fish/sudak.png"},
         {n: "Головень", min: 0.5, max: 4.0, p: 45, img: "Fish/Chub.png"},
         {n: "Жерех", min: 1.0, max: 6.0, p: 60, img: "Fish/zhereh.png"},
-        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "Fish/chehon.jpg"},
+        {n: "Чехоня", min: 0.3, max: 1.5, p: 25, img: "Fish/chehon.png"},
         {n: "Верховодка", min: 0.05, max: 0.5, p: 10, img: "Fish/verhovka.png"},
         {n: "Стерлядь", min: 2.0, max: 10.0, p: 150, img: "Fish/sterl.png"}
     ],
@@ -1051,17 +1051,17 @@ function goBack(updateScreen = true){
     // --- НАЖИВКИ ---
     let baitHtml = Object.keys(p.baits).map(name => {
         let count = p.baits[name];
-        if(count <= 0) return ''; // не показуємо нульові
+        if(count <= 0) return ''; // не показуємо нульові, як з їжею
         let it = GEAR_DATA.baits.find(b => b.n === name);
-    return `
+        return `
 <div class="item-row">
     <div style="display:flex; align-items:center; gap:10px;">
         <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
         <span>${name} (${count} шт)</span>
     </div>
     <button class="btn-small" onclick="selectBait('${name.replace(/'/g, "\\'")}')">
-    ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-</button>
+        ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
+    </button>
 </div>`;
     }).join('') || 'Наживки немає';
     document.getElementById('inv-baits').innerHTML = baitHtml;
@@ -1196,7 +1196,7 @@ function selectBait(name){
         updateUI();
     }
 
-   function cast(e){
+ function cast(e){
 
     if(document.getElementById('game-popup').classList.contains('show')) return;
 
@@ -1212,14 +1212,25 @@ function selectBait(name){
         return;
     }
 
-    if(!p.baits[p.selBait] || p.baits[p.selBait] <= 0)
-        return showPopup("Виберіть наживку в рюкзаку!");
+    // перевірка на наявність вибраної наживки
+    if(!p.selBait || !p.baits[p.selBait] <= 0){
+        showPopup("Виберіть наживку в рюкзаку!");
+        return;
+    }
 
-    if(p.hng < 5)
-        return showPopup("Ти занадто голодний, щоб кидати вудку!");
+    if(p.hng < 5){
+        showPopup("Ти занадто голодний, щоб кидати вудку!");
+        return;
+    }
 
     state = 'wait';
+
+    // витрачаємо наживку
     p.baits[p.selBait]--;
+
+    // якщо наживка закінчилась, просто залишаємо selBait, але показуємо 0 у UI
+    goBack(false);
+    updateUI();
 
     document.getElementById('s-cast').play();
     
@@ -1232,6 +1243,13 @@ function selectBait(name){
 
         if(state === 'wait'){
 
+            // якщо наживка закінчилась до появи риби
+            if(!p.selBait || p.baits[p.selBait] <= 0){
+                showPopup("🎣 Наживка закінчилась!");
+                resetGame();
+                return;
+            }
+
             state = 'bite';
             document.getElementById('s-bite').play();
 
@@ -1243,7 +1261,6 @@ function selectBait(name){
 
     }, 2000 + Math.random() * 3000);
 }
-
     function startPull() { pullActive = true; }
     function stopPull() { pullActive = false; document.getElementById('s-reel').pause(); }
     
