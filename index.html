@@ -1180,6 +1180,7 @@ function useFood(name) {
     }
 }
 function selectBait(name){
+    const baitName = Object.keys(p.baits).find(b => b === name);
     if(!p.baits[name] || p.baits[name] <= 0){
         showPopup("Немає цієї наживки!");
         return;
