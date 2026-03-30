@@ -525,7 +525,7 @@ border-top: none;
         {n: "Щука", min: 1.0, max: 8.0, p: 50, img: "Fish/shuka.png"},
         {n: "Окунь", min: 0.3, max: 1.5, p: 20, img: "Fish/okun.png"},
         {n: "Йорж", min: 0.2, max: 1.2, p: 15, img: "Fish/yor.png"},
-        {n: "Краснопірка", min: 0.2, max: 1.0, p: 12, img: "Fish/kras.jpg"},
+        {n: "Краснопірка", min: 0.2, max: 1.0, p: 12, img: "Fish/kras.png"},
         {n: "Лящ", min: 0.5, max: 4.5, p: 30, img: "Fish/lyash.png"},
         {n: "Короп", min: 1.0, max: 12.0, p: 50, img: "Fish/korop.png"},
         {n: "Білий амур", min: 2.0, max: 12.0, p: 60, img: "Fish/amur.png"},
@@ -1061,10 +1061,10 @@ function goBack(){
     </div>
 
     <button class="btn-small"
-        onclick="selectBait('${name}')"
-        ${(p.baits[name] <= 0 || p.selBait === name) ? 'disabled' : ''}>
-        ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-    </button>
+    onclick="selectBait('${name}')"
+    ${p.baits[name] <= 0 ? 'disabled' : ''}>
+    ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
+</button>
 </div>`;
     }).join('') || 'Наживки немає';
 
@@ -1158,49 +1158,38 @@ function sellGear(type, idx){
     updateUI();
     renderQuests();
 }
-  function useFood(name) {
+ function useFood(name) {
 
     let it =
         GEAR_DATA.food.find(f => f.n === name) ||
-        GEAR_DATA.alcohol.find(a => a.n === name);
+        GEAR_DATA.alcohol.find(a => a.n === name) ||
+        {h:0, xp:0, img:"Items/default_food.png"}; // fallback
 
-    if(!it) return;
+    if(!p.food[name] || p.food[name] <= 0) return;
 
-    if(p.food[name] > 0){
+    p.food[name]--;
 
-        p.food[name]--;
+    p.hng = Math.min(100, p.hng + (it.h || 0));
+    addXP(it.xp || 0);
 
-        // голод
-        if(it.h){
-            p.hng = Math.min(100, p.hng + it.h);
-        }
+    showPopup(`
+        <div style="text-align:center">
+            <img src="${it.img}" style="width:100px"><br>
+            Використано:<br><b>${name}</b>
+        </div>
+    `);
 
-        // XP
-        if(it.xp){
-            addXP(it.xp);
-        }
+    renderBackpack();
+    updateUI();
 
-        showPopup(`
-            <div style="text-align:center">
-                <img src="${it.img}" style="width:100px"><br>
-                Використано:<br><b>${name}</b>
-            </div>
-        `);
-
-        renderBackpack();
-        updateUI();
-
-        // дейлі квести
-        if(p.daily && p.daily.quests){
-            p.daily.quests.forEach(q=>{
-                if(q.type === "eat"){
-                    q.progress++;
-                    if(q.progress >= q.target){
-                        q.done = true;
-                    }
-                }
-            });
-        }
+    // дейлі квести
+    if(p.daily && p.daily.quests){
+        p.daily.quests.forEach(q=>{
+            if(q.type === "eat"){
+                q.progress++;
+                if(q.progress >= q.target) q.done = true;
+            }
+        });
     }
 }
 function selectBait(name){
