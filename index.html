@@ -1045,83 +1045,55 @@ function generateDailyQuests(){
     switchShop(cat);
 }
 
-function goBack(){
+function goBack() {
     showScreen(lastScreen);
 
-    // НАЖИВКИ
-    let baitHtml = Object.keys(p.baits).map(name => {
-
-        let it = GEAR_DATA.baits.find(b => b.n === name);
-
-        return `
-<div class="item-row">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-        <span>${name} (${p.baits[name]} шт)</span>
-    </div>
-
-    <button class="btn-small"
-    onclick="selectBait('${name}')"
-    ${p.baits[name] <= 0 ? 'disabled' : ''}>
-    ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
-</button>
-</div>`;
-    }).join('') || 'Наживки немає';
-
-    document.getElementById('inv-baits').innerHTML = baitHtml;
-
-
-    // ЇЖА + АЛКОГОЛЬ
-    let foodHtml = Object.keys(p.food).map(name => {
-
-        if(p.food[name] <= 0) return '';
-
-        let it =
-            GEAR_DATA.food.find(f => f.n === name) ||
-            GEAR_DATA.alcohol.find(a => a.n === name);
-
-        return `
-<div class="item-row">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-        <span>${name} (${p.food[name]} шт)</span>
-    </div>
-
-    <button class="btn-small" onclick="useFood('${name}')">
-        З'ЇСТИ
-    </button>
-</div>`;
-    }).join('') || 'Їжі немає';
-
-    document.getElementById('inv-food').innerHTML = foodHtml;
-
-
-    // СНАСТІ
-    let gearHtml = ['rods','reels','lines'].map(type => {
-
-        return p.ownedGear[type].map(idx => {
-
-            let it = GEAR_DATA[type][idx];
-            let isEquipped = p.gear[type.slice(0,-1)] === idx;
+    // --- НАЖИВКИ ---
+    // Додаємо .filter, щоб повністю видалити наживки, яких 0
+    let baitHtml = Object.keys(p.baits)
+        .filter(name => p.baits[name] > 0) 
+        .map(name => {
+            let it = GEAR_DATA.baits.find(b => b.n === name);
+            let isSelected = (p.selBait === name); // Перевірка поточної наживки
 
             return `
-<div class="item-row">
-    <div style="display:flex; align-items:center; gap:10px;">
-        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-        <span>${it.n} (${it.m}кг)</span>
-    </div>
-
-    <button class="btn-small"
-        onclick="equipGear('${type}', ${idx})"
-        ${isEquipped ? 'disabled' : ''}>
-        ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
-    </button>
-</div>`;
+            <div class="item-row" style="${isSelected ? 'border: 1px solid gold; background: rgba(255,215,0,0.1);' : ''}">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+                    <span>${name} (${p.baits[name]} шт)</span>
+                </div>
+                <button class="btn-small" 
+                    onclick="selectBait('${name}')" 
+                    ${isSelected ? 'disabled style="opacity:0.5"' : ''}>
+                    ${isSelected ? 'ВИБРАНО' : 'ВИБРАТИ'}
+                </button>
+            </div>`;
         }).join('');
 
-    }).join('');
+    document.getElementById('inv-baits').innerHTML = baitHtml || '<div style="padding:10px; opacity:0.5;">Наживки немає</div>';
 
-    document.getElementById('inv-gear').innerHTML = gearHtml;
+
+    // --- ЇЖА + АЛКОГОЛЬ ---
+    // Використовуємо .filter, щоб продукти, яких 0, зникали фізично з DOM
+    let foodHtml = Object.keys(p.food)
+        .filter(name => p.food[name] > 0) 
+        .map(name => {
+            let it = GEAR_DATA.food.find(f => f.n === name) || 
+                     GEAR_DATA.alcohol.find(a => a.n === name);
+
+            return `
+            <div class="item-row">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+                    <span>${name} (${p.food[name]} шт)</span>
+                </div>
+                <button class="btn-small" onclick="useFood('${name}')">З'ЇСТИ</button>
+            </div>`;
+        }).join('');
+
+    document.getElementById('inv-food').innerHTML = foodHtml || '<div style="padding:10px; opacity:0.5;">Їжі немає</div>';
+
+    // ... інший код для снастей ...
 }
 function sellGear(type, idx){
 
