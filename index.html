@@ -639,45 +639,63 @@ const ACHS = [
     const DAILY_POOL = [
 
 {
-    n:"Спіймати 5 риб",
-    target:5,
-    type:"fish",
-    reward:{money:200, xp:150}
+    n: "Спіймати 5 риб",
+    type: "fish",
+    target: 5,
+    progress: 0,
+    reward: { money: 200, xp: 150 },
+    done: false,
+    claimed: false
 },
 
 {
-    n:"Спіймати рибу >2кг",
-    target:1,
-    type:"big",
-    reward:{money:300, xp:200}
+    n: "Спіймати рибу >2кг",
+    type: "big",
+    target: 1,
+    progress: 0,
+    reward: { money: 300, xp: 200 },
+    done: false,
+    claimed: false
 },
 
- {
-        n: "Купити 3 приманки",
-        target: 3,
-        type: "shop",
-        reward: { money: 100, xp: 100 },
-    },
-
 {
-    n:"Заробити 500₴",
-    target:500,
-    type:"earn",
-    reward:{money:400, xp:250}
+    n: "Купити 3 приманки",
+    type: "shop",
+    target: 3,
+    progress: 0,
+    reward: { money: 100, xp: 100 },
+    done: false,
+    claimed: false
 },
-    {
-        n: "Відвідати 2 локації",
-        target: 2,
-        type: "loc",
-        reward: { money: 80, xp: 60 },
-
-    },
 
 {
-    n:"З'їсти 2 їжі",
-    target:2,
-    type:"eat",
-    reward:{money:150, xp:120}
+    n: "Заробити 500₴",
+    type: "earn",
+    target: 500,
+    progress: 0,
+    reward: { money: 400, xp: 250 },
+    done: false,
+    claimed: false
+},
+
+{
+    n: "Відвідати 2 локації",
+    type: "loc",
+    target: 2,
+    progress: 0,
+    reward: { money: 80, xp: 60 },
+    done: false,
+    claimed: false
+},
+
+{
+    n: "З'їсти 2 їжі",
+    type: "eat",
+    target: 2,
+    progress: 0,
+    reward: { money: 150, xp: 120 },
+    done: false,
+    claimed: false
 }
 
 ];
@@ -894,14 +912,14 @@ function showScreen(id){
         div.innerHTML = getQuestText(q);
         container.appendChild(div);
     });
-}
-function renderQuests(){
+}function renderQuests(){
     let html = p.daily.quests.map((q,i)=>{
         return `
 <div class="item-row">
     <div>
         <b>${q.n}</b><br>
-        <small>${q.progress}/${q.target}</small>
+        <small>${q.progress}/${q.target}</small><br>
+        <span style="color:gold">🎁 ${q.reward} XP</span>
     </div>
 
     ${
@@ -1109,26 +1127,20 @@ function sellGear(type, idx){
 
     renderBackpack();
     updateUI();
-}
-    function claimQuest(i){
+}function claimQuest(i){
 
     let q = p.daily.quests[i];
 
     if(!q.done || q.claimed) return;
 
+    addXP(q.reward);
+
     q.claimed = true;
 
-    p.money += q.reward.money;
-    addXP(q.reward.xp);
+    showPopup("🎉 Отримано нагороду: " + q.reward + " XP");
 
-    showPopup(
-        "🎁 Завдання виконано!\n+" +
-        q.reward.money + "₴\n+" +
-        q.reward.xp + " XP"
-    );
-
-    updateUI();
     renderQuests();
+    updateUI();
 }
  function useFood(name) {
 
