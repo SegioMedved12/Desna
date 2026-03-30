@@ -639,63 +639,45 @@ const ACHS = [
     const DAILY_POOL = [
 
 {
-    n: "Спіймати 5 риб",
-    type: "fish",
-    target: 5,
-    progress: 0,
-    reward: { money: 200, xp: 150 },
-    done: false,
-    claimed: false
+    n:"Спіймати 5 риб",
+    target:5,
+    type:"fish",
+    reward:{money:200, xp:150}
 },
 
 {
-    n: "Спіймати рибу >2кг",
-    type: "big",
-    target: 1,
-    progress: 0,
-    reward: { money: 300, xp: 200 },
-    done: false,
-    claimed: false
+    n:"Спіймати рибу >2кг",
+    target:1,
+    type:"big",
+    reward:{money:300, xp:200}
 },
 
-{
-    n: "Купити 3 приманки",
-    type: "shop",
-    target: 3,
-    progress: 0,
-    reward: { money: 100, xp: 100 },
-    done: false,
-    claimed: false
-},
+ {
+        n: "Купити 3 приманки",
+        target: 3,
+        type: "shop",
+        reward: { money: 100, xp: 100 },
+    },
 
 {
-    n: "Заробити 500₴",
-    type: "earn",
-    target: 500,
-    progress: 0,
-    reward: { money: 400, xp: 250 },
-    done: false,
-    claimed: false
+    n:"Заробити 500₴",
+    target:500,
+    type:"earn",
+    reward:{money:400, xp:250}
 },
+    {
+        n: "Відвідати 2 локації",
+        target: 2,
+        type: "loc",
+        reward: { money: 80, xp: 60 },
+
+    },
 
 {
-    n: "Відвідати 2 локації",
-    type: "loc",
-    target: 2,
-    progress: 0,
-    reward: { money: 80, xp: 60 },
-    done: false,
-    claimed: false
-},
-
-{
-    n: "З'їсти 2 їжі",
-    type: "eat",
-    target: 2,
-    progress: 0,
-    reward: { money: 150, xp: 120 },
-    done: false,
-    claimed: false
+    n:"З'їсти 2 їжі",
+    target:2,
+    type:"eat",
+    reward:{money:150, xp:120}
 }
 
 ];
@@ -912,14 +894,14 @@ function showScreen(id){
         div.innerHTML = getQuestText(q);
         container.appendChild(div);
     });
-}function renderQuests(){
+}
+function renderQuests(){
     let html = p.daily.quests.map((q,i)=>{
         return `
 <div class="item-row">
     <div>
         <b>${q.n}</b><br>
-        <small>${q.progress}/${q.target}</small><br>
-        <span style="color:gold">🎁 ${q.reward} XP</span>
+        <small>${q.progress}/${q.target}</small>
     </div>
 
     ${
@@ -1063,55 +1045,83 @@ function generateDailyQuests(){
     switchShop(cat);
 }
 
-function goBack() {
+function goBack(){
     showScreen(lastScreen);
 
-    // --- НАЖИВКИ ---
-    // Додаємо .filter, щоб повністю видалити наживки, яких 0
-    let baitHtml = Object.keys(p.baits)
-        .filter(name => p.baits[name] > 0) 
-        .map(name => {
-            let it = GEAR_DATA.baits.find(b => b.n === name);
-            let isSelected = (p.selBait === name); // Перевірка поточної наживки
+    // НАЖИВКИ
+    let baitHtml = Object.keys(p.baits).map(name => {
+
+        let it = GEAR_DATA.baits.find(b => b.n === name);
+
+        return `
+<div class="item-row">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+        <span>${name} (${p.baits[name]} шт)</span>
+    </div>
+
+    <button class="btn-small"
+    onclick="selectBait('${name}')"
+    ${p.baits[name] <= 0 ? 'disabled' : ''}>
+    ${p.selBait === name ? 'ВИБРАНО' : 'ВИБРАТИ'}
+</button>
+</div>`;
+    }).join('') || 'Наживки немає';
+
+    document.getElementById('inv-baits').innerHTML = baitHtml;
+
+
+    // ЇЖА + АЛКОГОЛЬ
+    let foodHtml = Object.keys(p.food).map(name => {
+
+        if(p.food[name] <= 0) return '';
+
+        let it =
+            GEAR_DATA.food.find(f => f.n === name) ||
+            GEAR_DATA.alcohol.find(a => a.n === name);
+
+        return `
+<div class="item-row">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+        <span>${name} (${p.food[name]} шт)</span>
+    </div>
+
+    <button class="btn-small" onclick="useFood('${name}')">
+        З'ЇСТИ
+    </button>
+</div>`;
+    }).join('') || 'Їжі немає';
+
+    document.getElementById('inv-food').innerHTML = foodHtml;
+
+
+    // СНАСТІ
+    let gearHtml = ['rods','reels','lines'].map(type => {
+
+        return p.ownedGear[type].map(idx => {
+
+            let it = GEAR_DATA[type][idx];
+            let isEquipped = p.gear[type.slice(0,-1)] === idx;
 
             return `
-            <div class="item-row" style="${isSelected ? 'border: 1px solid gold; background: rgba(255,215,0,0.1);' : ''}">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-                    <span>${name} (${p.baits[name]} шт)</span>
-                </div>
-                <button class="btn-small" 
-                    onclick="selectBait('${name}')" 
-                    ${isSelected ? 'disabled style="opacity:0.5"' : ''}>
-                    ${isSelected ? 'ВИБРАНО' : 'ВИБРАТИ'}
-                </button>
-            </div>`;
+<div class="item-row">
+    <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
+        <span>${it.n} (${it.m}кг)</span>
+    </div>
+
+    <button class="btn-small"
+        onclick="equipGear('${type}', ${idx})"
+        ${isEquipped ? 'disabled' : ''}>
+        ${isEquipped ? 'ЕКІПІЙОВАНО' : 'ВЗЯТИ'}
+    </button>
+</div>`;
         }).join('');
 
-    document.getElementById('inv-baits').innerHTML = baitHtml || '<div style="padding:10px; opacity:0.5;">Наживки немає</div>';
+    }).join('');
 
-
-    // --- ЇЖА + АЛКОГОЛЬ ---
-    // Використовуємо .filter, щоб продукти, яких 0, зникали фізично з DOM
-    let foodHtml = Object.keys(p.food)
-        .filter(name => p.food[name] > 0) 
-        .map(name => {
-            let it = GEAR_DATA.food.find(f => f.n === name) || 
-                     GEAR_DATA.alcohol.find(a => a.n === name);
-
-            return `
-            <div class="item-row">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <img src="${it?.img}" style="width:50px; height:50px; object-fit:contain;">
-                    <span>${name} (${p.food[name]} шт)</span>
-                </div>
-                <button class="btn-small" onclick="useFood('${name}')">З'ЇСТИ</button>
-            </div>`;
-        }).join('');
-
-    document.getElementById('inv-food').innerHTML = foodHtml || '<div style="padding:10px; opacity:0.5;">Їжі немає</div>';
-
-    // ... інший код для снастей ...
+    document.getElementById('inv-gear').innerHTML = gearHtml;
 }
 function sellGear(type, idx){
 
@@ -1127,22 +1137,28 @@ function sellGear(type, idx){
 
     renderBackpack();
     updateUI();
-}function claimQuest(i){
+}
+    function claimQuest(i){
 
     let q = p.daily.quests[i];
 
     if(!q.done || q.claimed) return;
 
-    addXP(q.reward);
-
     q.claimed = true;
 
-    showPopup("🎉 Отримано нагороду: " + q.reward + " XP");
+    p.money += q.reward.money;
+    addXP(q.reward.xp);
 
-    renderQuests();
+    showPopup(
+        "🎁 Завдання виконано!\n+" +
+        q.reward.money + "₴\n+" +
+        q.reward.xp + " XP"
+    );
+
     updateUI();
+    renderQuests();
 }
- function useFood(name) {
+function useFood(name) {
 
     let it =
         GEAR_DATA.food.find(f => f.n === name) ||
@@ -1151,7 +1167,7 @@ function sellGear(type, idx){
 
     if(!p.food[name] || p.food[name] <= 0) return;
 
-    p.food[name]--;
+    p.food[name]--; // зменшуємо кількість
 
     p.hng = Math.min(100, p.hng + (it.h || 0));
     addXP(it.xp || 0);
@@ -1163,7 +1179,7 @@ function sellGear(type, idx){
         </div>
     `);
 
-    renderBackpack();
+    renderBackpack(); // оновлюємо рюкзак після використання
     updateUI();
 
     // дейлі квести
@@ -1183,7 +1199,7 @@ function selectBait(name){
     }
 
     p.selBait = name;
-    renderBackpack();
+    renderBackpack(); // оновлюємо відразу після вибору
     updateUI();
 }
     function equipGear(type, idx) {
