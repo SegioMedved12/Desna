@@ -1045,8 +1045,8 @@ function generateDailyQuests(){
     switchShop(cat);
 }
 
-function goBack(){
-    showScreen(lastScreen);
+function goBack(updateScreen = true){
+    if(updateScreen) showScreen(lastScreen);
 
     // ------------------- НАЖИВКИ -------------------
     let baitHtml = Object.keys(p.baits)
@@ -1157,12 +1157,9 @@ function useFood(name) {
     let it =
         GEAR_DATA.food.find(f => f.n === name) ||
         GEAR_DATA.alcohol.find(a => a.n === name) ||
-        {h:0, xp:0, img:"Items/default_food.png"};
+        {h:0, xp:0, img:"Items/default_food.png"}; // fallback
 
-    if(!p.food[name] || p.food[name] <= 0) {
-        showPopup("Цього продукту немає!");
-        return;
-    }
+    if(!p.food[name] || p.food[name] <= 0) return;
 
     p.food[name]--;
 
@@ -1176,10 +1173,11 @@ function useFood(name) {
         </div>
     `);
 
-    // Оновлюємо тільки їжу в рюкзаку
-    updateBackpackFood();
+    // оновлюємо рюкзак **без закриття**
+    goBack(false);
+    updateUI();
 
-    // Дейлі квести
+    // дейлі квести
     if(p.daily && p.daily.quests){
         p.daily.quests.forEach(q=>{
             if(q.type === "eat"){
@@ -1197,9 +1195,11 @@ function selectBait(name){
 
     p.selBait = name;
 
-    // Оновлюємо тільки інвентар у рюкзаку, не закриваємо його
-    updateBackpackBaits();
+    // оновлюємо рюкзак **без закриття**
+    goBack(false); // false = не перезавантажувати екран
+    updateUI();
 }
+
     function equipGear(type, idx) {
         p.gear[type.slice(0,-1)] = idx;
         renderBackpack();
